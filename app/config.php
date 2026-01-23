@@ -14,6 +14,7 @@ class AccesoDatos {
     private $stmt_modSocio  = null;
     private $stmt_modPrestamo  = null;
     private $stmt_socio  = null;
+    private $stmt_libro  = null;
     private $stmt_libros  = null;
     private $stmt_libroDisponible  = null;
     private $stmt_prestamosDevueltos = null;
@@ -48,9 +49,10 @@ class AccesoDatos {
                                                                             (:socio_id,:libro_id,:f_prestamo,:f_vencimiento)");
         $this->stmt_modSocio   = $this->dbh->prepare("update socio set nombre=:nombre, contrasena=:contrasena, correo=:correo where id=:id_socio");
         $this->stmt_modPrestamo = $this->dbh->prepare("update prestamo set fecha_devolucion =:f_devolucion where socio_id =:socio_id and libro_id =:libro_id and fecha_devolucion is null");
-        $this->stmt_socio  = $this->dbh->prepare("select * from socio where id =:id");
+        $this->stmt_socio  = $this->dbh->prepare("select * from socio where nombre =:nombre");
+        $this->stmt_libro  = $this->dbh->prepare("select * from libro where nombre =:nombre");
         $this->stmt_libros = $this->dbh->prepare("select * from libro where genero =:genero");
-        $this->stmt_libroDisponible = $this->dbh->prepare("select 1 from libro where id =:id_libro and stock > 0");
+        $this->stmt_libroDisponible = $this->dbh->prepare("select * from libro where id =:id_libro and stock > 0");
         $this->stmt_prestamosDevueltos = $this->dbh->prepare("select * from prestamo where socio_id =:socio_id and fecha_devolucion is not null");
         $this->stmt_prestamosVencidos = $this->dbh->prepare("select * from prestamo where fecha_vencimiento < now() and fecha_devolucion is null");
         $this->stmt_prestamosNoVencidos = $this->dbh->prepare("select * from prestamo where fecha_vencimiento >= now() and fecha_devolucion is null");
@@ -83,23 +85,23 @@ class AccesoDatos {
     }
 
     //Dar de alta a un Socio
-    public function altaUsuario($socio):bool{
+    public function addUsuario($socio):bool{
         $this->stmt_creaSocio->execute( [$socio->nombre, $socio->password, $socio->correo]);
         $resu = ($this->stmt_creaSocio->rowCount () == 1);
         return $resu;
     }
 
     //Dar de alta un libro
-    public function altaLibro($libro):bool{
+    public function addLibro($libro):bool{
         $this->stmt_creaLibro->execute( [$libro->nombre, $libro->genero, $libro->stock]);
         $resu = ($this->stmt_creaLibro->rowCount () == 1);
         return $resu;
     }
     
     //Registro del prestamo 
-    public function añadirPrestamo($socio,$libro,$f_prestamo,$f_vencimiento):bool{
-        $this->stmt_creaPrestamo->bindValue(":socio_id",$socio->id);
-        $this->stmt_creaPrestamo->bindValue("libro_id",$libro->id);
+    public function addPrestamo($socio_id,$libro_id,$f_prestamo,$f_vencimiento):bool{
+        $this->stmt_creaPrestamo->bindValue(":socio_id",$socio_id);
+        $this->stmt_creaPrestamo->bindValue("libro_id",$libro_id);
         $this->stmt_creaPrestamo->bindValue("f_prestamo",$f_prestamo);
         $this->stmt_creaPrestamo->bindValue("f_vencimiento",$f_vencimiento);
         $this->stmt_creaPrestamo->execute();
@@ -128,11 +130,11 @@ class AccesoDatos {
         return $resu;
     }
 
-    //Devuelvo un usuario o false
-    public function getUsuario ($socio) {
+    //Devuelvo un socio o false
+    public function getSocio($socio_nombre) {
         $user = false;
         $this->stmt_socio->setFetchMode(PDO::FETCH_CLASS, 'Socio');
-        $this->stmt_socio->bindParam(':id',$socio->id);
+        $this->stmt_socio->bindParam(':nombre',$socio_nombre);
         if ( $this->stmt_socio->execute() ){
              if ( $obj = $this->stmt_socio->fetch()){
                 $user= $obj;
@@ -141,10 +143,24 @@ class AccesoDatos {
         return $user;
     }
 
+    //Devuelvo un libro o false
+    public function getLibro($libro_nombre) {
+        $libro = false;
+        $this->stmt_libro->setFetchMode(PDO::FETCH_CLASS, 'Libro');
+        $this->stmt_libro->bindParam(':nombre',$libro_nombre);
+        if ( $this->stmt_libro->execute() ){
+             if ( $obj = $this->stmt_libro->fetch()){
+                $libro= $obj;
+            }
+        }
+        return $libro;
+    }
+
     //Devuelvo la lista de libro segun el genero
-    public function obtenerLibros():array {
+    public function getLibros($genero):array {
         $tlibros = [];
         $this->stmt_libros->setFetchMode(PDO::FETCH_CLASS, 'Libro');
+        $this->stmt_libro->bindParam(':genero',$genero);
         if ( $this->stmt_libros->execute() ){
             while ( $libro = $this->stmt_libros->fetch()){
                $tlibros[]= $libro;
@@ -154,17 +170,19 @@ class AccesoDatos {
     }
 
     //Si hay stock disponible de un libro
-    public function disponibleLibro($libro):bool {
+    public function getLibroDisponible($libro) {
         $libroDisponible = false;
         $this->stmt_libroDisponible->bindParam(":id", $libro->id);
         if ( $this->stmt_libroDisponible->execute() ){
-            $libroDisponible = true;
+           if ( $obj = $this->stmt_libroDisponible->fetch()){
+                $libroDisponible= $obj;
+            }
         }
         return $libroDisponible;
     }
 
     //Prestamos devueltos de un socio
-    public function devueltoSocio($socio) {
+    public function getPrestamoSocio($socio) {
         $tprestamosDevueltos = [];
         $this->stmt_prestamosDevueltos->bindParam("socio_id", $socio->id);
         $this->stmt_prestamosDevueltos->setFetchMode(PDO::FETCH_CLASS, 'Prestamo');
@@ -177,7 +195,7 @@ class AccesoDatos {
     }
 
     //Prestamos vencidos
-    public function vencidos() {
+    public function getvencidos() {
         $tvencidos = [];
         $this->stmt_prestamosVencidos->setFetchMode(PDO::FETCH_CLASS, 'Prestamo');
         if ( $this->stmt_prestamosVencidos->execute() ){
@@ -189,7 +207,7 @@ class AccesoDatos {
     }
 
     //Prestamos no vencidos
-    public function noVencidos() {
+    public function getnoVencidos() {
         $tnoVencidos = [];
         $this->stmt_prestamosNoVencidos->setFetchMode(PDO::FETCH_CLASS, 'Prestamo');
         if ( $this->stmt_prestamosNoVencidos->execute() ){
@@ -201,7 +219,7 @@ class AccesoDatos {
     }
 
     //Registro de devolucion
-    public function devoluciones() {
+    public function getdevoluciones() {
         $tdevoluciones = [];
         $this->stmt_devoluciones->setFetchMode(PDO::FETCH_CLASS, 'Prestamo');
         if ( $this->stmt_devoluciones->execute() ){
