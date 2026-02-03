@@ -1,9 +1,9 @@
 <?php
 class Libro {
-    private $id;
-    private $nombre;
-    private $genero;
-    private $stock;
+    public $id;
+    public $nombre;
+    public $genero;
+    public $stock;
 
     function __get($name){
         if(property_exists($this,$name)){
