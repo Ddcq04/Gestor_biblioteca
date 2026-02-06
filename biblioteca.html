@@ -10,94 +10,104 @@
 </head>
 
 <body>
-    <div class="global">
-        <nav class="nav">
-            <h1>Gestión de Biblioteca</h2>
-                <ul>
-                    <li><a href="#libros">Gestión de Libros</a></li>
-                    <li><a href="#socios">Gestión de Socios</a></li>
-                    <li><a href="#prestamos">Préstamos y Devoluciones</a></li>
-                    <li><a href="#consultas">Consultas y Reportes</a></li>
-                </ul>
-        </nav>
-
-
-        <main class="cont1">
-            <!-- <video autoplay muted loop id="videofondo">
-                <source src="b.mp4" type="video/mp4">
-            </video> -->
-            <header>
-                <h2>Gestión de libros</h1>
-                    <h3>Bienvenidos</h3>
-            </header>
-
-            <section id="altas" class="sub">
-                <h3>Nuevo Registro</h3>
-                <form class="form">
-
-                    <div class="subform">
-                        <label>Alta</label>
-                        <select>
-                            <option>Libro</option>
-                            <option>Socio</option>
-                        </select>
-
-                        <label>Nombre del libro</label>
-                        <input type="text" placeholder="Ej: Calabozos y dragones">
-                    </div>
-
-                    <button type="submit" class="btn">Registrar Alta</button>
-
-                </form>
-            </section>
-
-            <section id="consultas" class="sub">
-                <h3>Listado de Préstamos</h3>
-                <div class="filters">
-                    <button class="btn">Todos</button>
-                    <button class="btn">Vencidos</button>
-                    <button class="btn">No Devueltos</button>
-                </div>
-                <div class="tablecontainer">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Socio</th>
-                                <th>Libro</th>
-                                <th>Fecha Préstamo</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Juan Pérez</td>
-                                <td>TypeScript Avanzado</td>
-                                <td>2024-01-10</td>
-                                <td><span class="badge warning">Vencido</span></td>
-                                <td><button class="btn">Devolver</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-
-
-    <div class="cont2">
-        <footer class="aviso">
+    <!--  <div class="global"> -->
+    <nav class="nav">
+        <h1>Gestión de Biblioteca</h2>
             <ul>
-                <li><a href="#">Aviso legal</a></li>
-                <li><a href="#">Términos y condiciones</a></li>
-                <li><a href="#">Política de privacidad</a></li>
-                <li><a href="#">Cookies</a></li>
+                <li><a href="#1">Altas de libros y socio</a></li>
+                <li><a href="#socios">Gestión de Socios</a></li>
+                <li><a href="#prestamos">Préstamos y Devoluciones</a></li>
+                <li><a href="#consultas">Consultas y Reportes</a></li>
             </ul>
-            <p><span>© 2025</span> |<span> Trabajo grupal de Ampliación</span> </p>
-        </footer>
-    </div>
+    </nav>
+
+
+    <main class="cont1">
+      <!--   <header>
+            <h2>Gestión de libros</h1>
+                <h3>Bienvenidos</h3>
+        </header> -->
+
+        <section id="altas" class="sub">
+            <h3>Nuevo Registro</h3>
+            <form class="form" id="formularioBiblioteca">
+                <div class="subform">
+                    <label>Nombre del Socio</label>
+                    <input type="text" id="nombreSocio" placeholder="Raul Lionela">
+
+                    <label>Libro</label>
+                    <input type="text" id="tituloLibro1" placeholder="Encontrando a Raul">
+                     <label>genero</label>
+                    <input type="text" id="tituloLibro1" placeholder="Encontrando a Raul">
+                </div>
+                <button type="submit" class="btn">Registrar Alta</button>
+            </form>
+        </section>
+
+
+         <section id="altas" class="sub">
+            <h3>Modificacion de datos de usuario</h3>
+            <form class="form" id="formularioBiblioteca">
+                <div class="subform">
+                    <label>Nombre del Socio</label>
+                    <input type="text" id="nombreSocio" placeholder="Raul Lionela">
+
+                    <label>Libro</label>
+                    <input type="text" id="tituloLibro1" placeholder="Encontrando a Raul">
+                </div>
+                <button type="submit" class="btn">Registrar Alta</button>
+            </form>
+        </section>
+
+
+        <section id="consultas" class="sub">
+            <h3>Listado de Préstamos</h3>
+            <div class="filters">
+                <button class="btn">Todos</button>
+                <button class="btn">Vencidos</button>
+                <button class="btn">No Devueltos</button>
+            </div>
+            <div class="tablecontainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Socio</th>
+                            <th>Libro</th>
+                            <th>Fecha Préstamo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Juan Pérez</td>
+                            <td>TypeScript Avanzado</td>
+                            <td>2024-01-10</td>
+                            <td><span class="badge warning">Vencido</span></td>
+                            <td><button class="btn">Devolver</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+    <!-- </div> -->
+
+
+
+    <!--     <div class="cont2">
+ -->
+    <footer class="aviso">
+        <ul>
+            <li><a href="#">Aviso legal</a></li>
+            <li><a href="#">Términos y condiciones</a></li>
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Cookies</a></li>
+        </ul>
+        <p><span>© 2025</span> |<span> Trabajo grupal de Ampliación</span> </p>
+    </footer>
+    <!--  </div> -->
 
 
 </body>
