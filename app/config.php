@@ -87,18 +87,26 @@ class AccesoDatos {
     }
 
     //Dar de alta a un Socio
-    public function addUsuario($socio):bool{
-        $this->stmt_creaSocio->execute( [$socio->nombre, $socio->password, $socio->correo]);
-        $resu = ($this->stmt_creaSocio->rowCount () == 1);
-        return $resu;
+ public function addUsuario($socio): bool {
+    try {
+        $this->stmt_creaSocio->execute([$socio->nombre, $socio->password, $socio->correo]);
+        return true; // Si no lanza excepción, es exitoso
+    } catch (PDOException $e) {
+        error_log("Error al crear usuario: " . $e->getMessage());
+        return false; // En caso de error
     }
+}
+//Dar de alta un Libro
+public function addLibro($libro): bool {
+    try {
+        $this->stmt_creaLibro->execute([$libro->nombre, $libro->genero, $libro->stock]);
+        return true; // Éxito
+    } catch (PDOException $e) {
+        error_log("Error al crear libro: " . $e->getMessage());
+        return false; // Fallo
+    }
+}
 
-    //Dar de alta un libro
-    public function addLibro($libro):bool{
-        $this->stmt_creaLibro->execute( [$libro->nombre, $libro->genero, $libro->stock]);
-        $resu = ($this->stmt_creaLibro->rowCount () == 1);
-        return $resu;
-    }
     
     //Registro del prestamo 
     public function addPrestamo($socio_id,$libro_id,$f_prestamo,$f_vencimiento):bool{
@@ -237,4 +245,3 @@ class AccesoDatos {
         trigger_error('La clonación no permitida', E_USER_ERROR); 
     }
 }
-?>

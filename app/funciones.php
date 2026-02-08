@@ -1,139 +1,107 @@
 <?php
-//ACCIONES POST
+include_once "server.php"; // tu clase modelo
+include_once "dat/Prestamo.php";
+include_once  "dat/Socio.php";
+include_once  "dat/Libro.php";
+
+// === ACCIONES POST ===
 function altaSocio($socio) {
     $db = AccesoDatos::getModelo();
-    if ($db->addUsuario($socio)) {
-        echo json_encode(["mensaje" => "Socio creado con éxito"]);
-    } else {
-        header('HTTP/1.1 500 Internal Server Error');
-    }
+    $exito = $db->addUsuario($socio);
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        "mensaje" => $exito ? "Socio creado con éxito" : "Error al crear socio"
+    ]);
+    exit;
 }
 
 function altaLibro($libro) {
     $db = AccesoDatos::getModelo();
-    if ($db->addUsuario($libro)) {
-        echo json_encode(["mensaje" => "Socio creado con éxito"]);
-    } else {
-        header('HTTP/1.1 500 Internal Server Error');
-    }
+    $exito = $db->addLibro($libro);
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        "mensaje" => $exito ? "Libro creado con éxito" : "Error al crear libro"
+    ]);
+    exit;
 }
 
-function registroPrestamo($socio_id,$libro_id){
-    $db = AccesoDatos::getModelo();
-    $socio = $db->getSocio($socio_id);
-    $libro = $db->getLibro($libro_id);
-    $f_prestamo = date("Y-m-d H:i:s");
-    $f_vencimiento = date("Y-m-d H:i:s", strtotime("+14 days")); //14 dias de vencimiento
-    if($db->addPrestamo($socio->id, $libro->id, $f_prestamo, $f_vencimiento)) {
-        echo json_encode(["status" => "Ok", "mensaje" => "Préstamo registrado"]);
-    } else {
-        echo json_encode(["status" => "Error"]);
-    }
-}
-
-
-//ACCIONES GET
-function datosSocio($id){
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $socio = $db->getSocio($id);
-    if($socio) {
-        echo json_encode($socio);
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-function librosPorGenero($genero){
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $libros = $db->getLibros($genero);
-    if($libros) {
-        echo json_encode($libros);
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-function libroDisponible($libro_id) {
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $libro = $db->getLibro($libro_id);
-    if($libro) {
-        $libro_disponible = $db->getLibroDisponible($libro->id);
-        if($libro_disponible) {
-            echo json_encode($libro_disponible);
-        }else header('HTTP/1.1 404 Not Found');
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-function prestamosSocio($socio_id) {
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $socio = $db->getSocio($socio_id);
-    $prestamosSocio = $db->getPrestamoSocio($socio); 
-    if($prestamosSocio) {
-        echo json_encode($prestamosSocio);
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-function prestamosVencidos(){
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $prestamosVencidos = $db->getVencidos();
-    if($prestamosVencidos) {
-        echo json_encode($prestamosVencidos);
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-function prestamosnoVencidos(){
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $prestamosnoVencidos = $db->getnoVencidos();
-    if($prestamosnoVencidos) {
-        echo json_encode($prestamosnoVencidos);
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-function devoluciones(){
-    header('Content-type: application/json');
-    $db = AccesoDatos::getModelo();
-    $devoluciones = $db->getDevoluciones();
-    if($devoluciones) {
-        echo json_encode($devoluciones);
-    }else header('HTTP/1.1 404 Not Found');
-}
-
-
-//ACCIONES PUT
-function modificarSocio($socio_id,$datos_nuevos){
-    $db = AccesoDatos::getModelo();
-    $socio = $db->getSocio($socio_id);
-    if($socio){
-        $socio->nombre = $datos_nuevos->nombre;
-        $socio->correo = $datos_nuevos->correo;
-        $socio->contrasena = $datos_nuevos->contrasena;
-    }
-
-    if ($db->modSocio($socio)) {
-        echo json_encode(["mensaje" => "Actualizado"]);
-    } else {
-        echo json_encode(["mensaje" => "No hubo cambios o error"]);
-    }
-}
-
-function libroDevuelto($socio_id,$libro_id){
+function libroDevuelto($socio_id, $libro_id){
     $db = AccesoDatos::getModelo();
     $socio = $db->getSocio($socio_id);
     $libro = $db->getLibro($libro_id);
     $f_devolucion = date("Y-m-d H:i:s");
-    
-    if(!$socio || !$libro) {
-        header('HTTP/1.1 404 Not Found');
+
+    header('Content-Type: application/json');
+
+    if (!$socio || !$libro) {
         echo json_encode(["mensaje" => "Socio o Libro inexistente"]);
-        return;
+        exit;
     }
 
-    if($db->modPrestamo($socio, $libro, $f_devolucion)){
-        echo json_encode(["mensaje" => "Devolución registrada"]);
-    } else {
-        echo json_encode(["mensaje" => "Error o no hay préstamo activo para este par"]);
-    }
+    $exito = $db->modPrestamo($socio, $libro, $f_devolucion);
+    echo json_encode(["mensaje" => $exito ? "Devolución registrada" : "Error o no hay préstamo activo"]);
+    exit;
 }
-?>
+
+// === ACCIONES GET ===
+function prestamosSocio($socio_id){
+    $db = AccesoDatos::getModelo();
+    $socio = $db->getSocio($socio_id);
+    $prestamos = $db->getPrestamoSocio($socio);
+
+    header('Content-Type: application/json');
+    echo json_encode($prestamos ?? []);
+    exit;
+}
+
+function prestamosVencidos(){
+    $db = AccesoDatos::getModelo();
+    $prestamos = $db->getVencidos();
+
+    header('Content-Type: application/json');
+    echo json_encode($prestamos ?? []);
+    exit;
+}
+
+function prestamosnoVencidos(){
+    $db = AccesoDatos::getModelo();
+    $prestamos = $db->getnoVencidos();
+
+    header('Content-Type: application/json');
+    echo json_encode($prestamos ?? []);
+    exit;
+}
+
+// === DISPATCHER ===
+$action = $_GET['action'] ?? '';
+$input = json_decode(file_get_contents("php://input"));
+
+switch($action){
+    case 'altaSocio':
+        altaSocio($input);
+        break;
+    case 'altaLibro':
+        altaLibro($input);
+        break;
+    case 'prestamosSocio':
+        $socio_id = $_GET['socio_id'] ?? 1;
+        prestamosSocio($socio_id);
+        break;
+    case 'prestamosVencidos':
+        prestamosVencidos();
+        break;
+    case 'prestamosnoVencidos':
+        prestamosnoVencidos();
+        break;
+    case 'libroDevuelto':
+        $socio_id = $_GET['socio_id'] ?? null;
+        $libro_id = $_GET['libro_id'] ?? null;
+        libroDevuelto($socio_id, $libro_id);
+        break;
+    default:
+        header('Content-Type: application/json');
+        echo json_encode(["mensaje" => "Acción no encontrada"]);
+        exit;
+}

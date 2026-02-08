@@ -6,19 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Biblioteca</title>
     <link rel="stylesheet" href="biblioteca.css">
+    
 
 </head>
 
 <body>
     <div class="global">
         <nav class="nav">
-            <h1>Gestión de Biblioteca</h2>
-                <ul>
-                    <li><a href="#libros">Gestión de Libros</a></li>
-                    <li><a href="#socios">Gestión de Socios</a></li>
-                    <li><a href="#prestamos">Préstamos y Devoluciones</a></li>
-                    <li><a href="#consultas">Consultas y Reportes</a></li>
-                </ul>
+            <h1>Gestión de Biblioteca</h1>
+            <ul>
+                <li><a href="#libros">Gestión de Libros</a></li>
+                <li><a href="#socios">Gestión de Socios</a></li>
+                <li><a href="#prestamos">Préstamos y Devoluciones</a></li>
+                <li><a href="#consultas">Consultas y Reportes</a></li>
+            </ul>
         </nav>
 
 
@@ -54,9 +55,9 @@
             <section id="consultas" class="sub">
                 <h3>Listado de Préstamos</h3>
                 <div class="filters">
-                    <button class="btn">Todos</button>
-                    <button class="btn">Vencidos</button>
-                    <button class="btn">No Devueltos</button>
+                    <button class="btn" id="btnTodos">Todos</button>
+                    <button class="btn" id="btnVencidos">Vencidos</button>
+                    <button class="btn" id="btnNoDevueltos">No Devueltos</button>
                 </div>
                 <div class="tablecontainer">
                     <table>
@@ -69,15 +70,7 @@
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Juan Pérez</td>
-                                <td>TypeScript Avanzado</td>
-                                <td>2024-01-10</td>
-                                <td><span class="badge warning">Vencido</span></td>
-                                <td><button class="btn">Devolver</button></td>
-                            </tr>
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </section>
@@ -99,7 +92,7 @@
         </footer>
     </div>
 
-
+<script type="module" src="bibliotecas.js"></script>
 </body>
 
 </html>
