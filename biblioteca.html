@@ -10,105 +10,159 @@
 </head>
 
 <body>
-    <!--  <div class="global"> -->
+
     <nav class="nav">
-        <h1>Gestión de Biblioteca</h2>
-            <ul>
-                <li><a href="#1">Altas de libros y socio</a></li>
-                <li><a href="#socios">Gestión de Socios</a></li>
-                <li><a href="#prestamos">Préstamos y Devoluciones</a></li>
-                <li><a href="#consultas">Consultas y Reportes</a></li>
-            </ul>
+        <h1>Gestión de Biblioteca</h1>
+        <ul>
+            <li><a href="#altas">Altas</a></li>
+            <li><a href="#modi">Modificación</a></li>
+            <li><a href="#consultas">Consultas</a></li>
+        </ul>
     </nav>
 
+<!-- seccion 1 -->
+    <main class="general">
+        <section id="altas" class="sec">
+            <div class="content">
+                <div class="content">
+                    <h3>Altas</h3>
 
-    <main class="cont1">
-      <!--   <header>
-            <h2>Gestión de libros</h1>
-                <h3>Bienvenidos</h3>
-        </header> -->
+                    <form class="form">
+                        <p>nuevo libro</p>
+                        <div class="miniform">
+                            <input type="text" placeholder="Título del Libro">
+                            <input type="text" placeholder="Género">
+                            <input type="text" placeholder="ID Ejemplar">
+                        </div>
+                        <button type="submit" class="btn">Adquirir Libro</button>
+                    </form>
 
-        <section id="altas" class="sub">
-            <h3>Nuevo Registro</h3>
-            <form class="form" id="formularioBiblioteca">
-                <div class="subform">
-                    <label>Nombre del Socio</label>
-                    <input type="text" id="nombreSocio" placeholder="Raul Lionela">
+                    <hr>
 
-                    <label>Libro</label>
-                    <input type="text" id="tituloLibro1" placeholder="Encontrando a Raul">
-                     <label>genero</label>
-                    <input type="text" id="tituloLibro1" placeholder="Encontrando a Raul">
+                    <form class="form">
+                        <p>nuevo socio</p>
+                        <div class="miniform">
+                            <input type="text" placeholder="Nombre completo del Socio">
+                            <input type="text" placeholder="DNI">
+                        </div>
+                        <button type="submit" class="btn">Registrar Socio</button>
+                    </form>
+
+                    <hr>
+
+                    <form class="form">
+                        <p>registrar prestamo</p>
+                        <div class="miniform">
+                            <label>Seleccionar Socio:</label>
+                            <select>
+                                <option>socio...</option>
+                            </select>
+
+                            <label>Seleccionar Libro:</label>
+                            <select>
+                                <option>libo Disponible...</option>
+                            </select>
+
+                            <label>fecha de Devolución:</label>
+                            <input type="date">
+                        </div>
+                        <button type="submit" class="btn">Crear Préstamo</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn">Registrar Alta</button>
-            </form>
-        </section>
-
-
-         <section id="altas" class="sub">
-            <h3>Modificacion de datos de usuario</h3>
-            <form class="form" id="formularioBiblioteca">
-                <div class="subform">
-                    <label>Nombre del Socio</label>
-                    <input type="text" id="nombreSocio" placeholder="Raul Lionela">
-
-                    <label>Libro</label>
-                    <input type="text" id="tituloLibro1" placeholder="Encontrando a Raul">
-                </div>
-                <button type="submit" class="btn">Registrar Alta</button>
-            </form>
-        </section>
-
-
-        <section id="consultas" class="sub">
-            <h3>Listado de Préstamos</h3>
-            <div class="filters">
-                <button class="btn">Todos</button>
-                <button class="btn">Vencidos</button>
-                <button class="btn">No Devueltos</button>
-            </div>
-            <div class="tablecontainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Socio</th>
-                            <th>Libro</th>
-                            <th>Fecha Préstamo</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Juan Pérez</td>
-                            <td>TypeScript Avanzado</td>
-                            <td>2024-01-10</td>
-                            <td><span class="badge warning">Vencido</span></td>
-                            <td><button class="btn">Devolver</button></td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </section>
 
+        <!-- seccion 2 -->
+        <section id="modi" class="sec">
+            <div class="content">
+                <div class="content">
+                    <h3>Modificación de Usuario</h3>
+
+                    <div class="miniform">
+                        <label>Buscar socio por ID:</label>
+                        <div>
+                            <input type="text" id="idSocioBusqueda" placeholder="Ej: 1025">
+                            <button type="button" class="btn">Cargar Datos</button>
+                        </div>
+                    </div>
+
+                    <form class="form" id="formModificar">
+                        <p>Datos actuales socio:</p>
+                        <div class="miniform">
+                            <label for="modNombreSocio">Nombre Completo</label>
+                            <input type="text" id="modSocio" placeholder="Cargando...">
+
+                            <label for="modEmailSocio">Correo Electrónico</label>
+                            <input type="email" id="modgmailSocio" placeholder="Cargando">
+
+                            <label for="modTelfSocio">Teléfono</label>
+                            <input type="text" id="modtelfSocio" placeholder="Cargando">
+                        </div>
+                        <button type="submit" class="btn">Actualizar</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- seccion3 -->
+        <section id="consultas" class="sec">
+
+            <div class="content">
+                <div class="content">
+                    <h3>Consultas</h3>
+
+                    <div class="seconsult">
+                        <input type="text" id="busquedaSocio" placeholder="Buscar socio..">
+
+                        <select>
+                            <option value="">Todos los géneros</option>
+                            <option value="aventura">Aventura</option>
+                            <option value="ciencia-ficcion">Ciencia Ficción</option>
+                        </select>
+
+
+                        <button class="btn">Vencidos</button>
+                        <button class="btn">No Vencidos</button>
+                        <button class="btn">Histórico (Devueltos)</button>
+
+                    </div>
+
+                    <div class="tablecontainer">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Socio</th>
+                                    <th>Libro (Género)</th>
+                                    <th>Plazo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaResultados">
+                                <tr>
+                                    <td>Raul Lionela</td>
+                                    <td>Encontrando a Raul (Aventura)</td>
+                                    <td>2025-06-10</td>
+                                    <td><span class="badge">No Vencido</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </section>
     </main>
-    <!-- </div> -->
 
-
-
-    <!--     <div class="cont2">
- -->
     <footer class="aviso">
         <ul>
             <li><a href="#">Aviso legal</a></li>
-            <li><a href="#">Términos y condiciones</a></li>
-            <li><a href="#">Política de privacidad</a></li>
-            <li><a href="#">Cookies</a></li>
+            <li><a href="#">Términos</a></li>
+            <li><a href="#">Privacidad</a></li>
         </ul>
-        <p><span>© 2025</span> |<span> Trabajo grupal de Ampliación</span> </p>
+        <p>© 2025 | Trabajo grupal de Ampliación</p>
     </footer>
-    <!--  </div> -->
-
 
 </body>
 
