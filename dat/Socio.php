@@ -1,9 +1,9 @@
 <?php
 class Socio {
-    private $id;
-    private $nombre;
-    private $contrasena;
-    private $correo;
+    public $id;
+    public $nombre;
+    public $contrasena;
+    public $correo;
 
     function __get($name){
         if(property_exists($this,$name)){

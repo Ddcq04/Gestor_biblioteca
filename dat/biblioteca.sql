@@ -23,3 +23,19 @@ CREATE TABLE prestamo (
     FOREIGN KEY (socio_id) REFERENCES socio (id),
     FOREIGN KEY (libro_id) REFERENCES libro (id)
 );
+
+--INSERCION DE DATOS
+--SOCIO
+INSERT INTO socio (nombre, contrasena, correo) VALUES 
+('Juan Pérez', '1234abc', 'juan.perez@email.com'),
+('Ana García', 'pass789', 'ana.garcia@email.com'),
+('Luis Rodríguez', 'admin2026', 'luis.rod@email.com'),
+('Marta López', 'marta123', 'marta.lopez@email.com'),
+('Carlos Sánchez', 'charly_99', 'carlos.s@email.com');
+--LIBRO
+INSERT INTO libro (nombre, genero, stock) VALUES 
+('Don Quijote de la Mancha', 'Clásico', 5),
+('Cien años de soledad', 'Realismo Mágico', 3),
+('Harry Potter y la Piedra Filosofal', 'Fantasía', 10),
+('El código Da Vinci', 'Suspenso', 4),
+('Breve historia del tiempo', 'Divulgación Científica', 2);
