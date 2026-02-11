@@ -1,4 +1,5 @@
 <?php 
+/*
 include_once "app/server.php";
 include_once "app/config.php";
 include_once "app/funciones.php";
@@ -65,5 +66,6 @@ switch($metodo) {
             header('HTTP/1.1 405 Method Not Allowed');
             header('Allow: GET, PUT, DELETE, POST');
             break;
-}
+}*
+include_once "biblioteca.html";*/
 ?>

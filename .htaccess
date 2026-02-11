@@ -3,4 +3,4 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 # Si NO existe, envía todo a index.php
-RewriteRule ^(.*)$ index.php [L,QSA]
+RewriteRule ^(.*)$ server.php [L,QSA]

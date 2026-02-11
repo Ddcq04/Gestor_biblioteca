@@ -1,13 +1,19 @@
 <?php
-include_once "config.php";
-include_once "funciones.php";
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
-ini_set('display_errors', 0);
+// server.php
+include_once "app/config.php";
+include_once "app/funciones.php";
+
 header('Content-Type: application/json');
-// Capturamos la acción del query string
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+// Capturamos la acción
 $action = $_GET['action'] ?? '';
-// Si viene POST, leemos el JSON
+
+// Leemos el JSON del cuerpo (para POST y PUT)
 $input = json_decode(file_get_contents("php://input"));
+
 switch($action){
     case 'altaSocio': 
         altaSocio($input); 
@@ -19,10 +25,7 @@ switch($action){
 
     case 'prestamosSocio': 
         $socio_id = $_GET['socio_id'] ?? 1; 
-        $db = AccesoDatos::getModelo();
-        $socio = $db->getSocio($socio_id);
-        header('Content-Type: application/json');
-        echo json_encode($db->getPrestamoSocio($socio));
+        prestamosSocio($socio_id);
         break;
 
     case 'prestamosVencidos': 
@@ -40,6 +43,7 @@ switch($action){
         break;
 
     default: 
-        echo json_encode(["mensaje"=>"No encontrado"]);
+        http_response_code(404);
+        echo json_encode(["mensaje" => "Acción '$action' no encontrada"]);
         break;
 }

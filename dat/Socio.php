@@ -2,7 +2,7 @@
 class Socio {
     public $id;
     public $nombre;
-    public $contrasena;
+    public $telefono;
     public $correo;
 
     function __get($name){

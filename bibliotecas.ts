@@ -47,18 +47,24 @@ function pintarTabla(lista: any[]) {
 
     lista.forEach((p) => {
         const tr = document.createElement("tr");
+        // Ajustamos los campos a los nombres de tu DB (socio_id, libro_id, etc.)
+        // Si quieres los nombres reales del socio/libro, tendrías que hacer un JOIN en SQL
         tr.innerHTML = `
-            <td>${p.socio}</td>
-            <td>${p.libro}</td>
-            <td>${p.fecha}</td>
-            <td>${p.estado}</td>
+            <td>ID Socio: ${p.socio_id}</td>
+            <td>ID Libro: ${p.libro_id}</td>
+            <td>${p.fecha_prestamo}</td>
+            <td>${p.fecha_devolucion ? 'Devuelto' : 'Pendiente'}</td>
             <td>
-                ${p.estado !== "Devuelto" ? `<button class="btn-devolver">Devolver</button>` : ""}
+                ${!p.fecha_devolucion ? `<button class="btn-devolver" data-socio="${p.socio_id}" data-libro="${p.libro_id}">Devolver</button>` : ""}
             </td>
         `;
 
         const btnDevolver = tr.querySelector(".btn-devolver");
-        btnDevolver?.addEventListener("click", () => devolverLibro(p.socio_id, p.libro_id));
+        btnDevolver?.addEventListener("click", () => {
+            const sId = parseInt(btnDevolver.getAttribute("data-socio")!);
+            const lId = parseInt(btnDevolver.getAttribute("data-libro")!);
+            devolverLibro(sId, lId);
+        });
 
         tbody.appendChild(tr);
     });
@@ -92,7 +98,7 @@ async function registrarAlta() {
 
     const action = tipo === "Socio" ? "altaSocio" : "altaLibro";
     const datos = tipo === "Socio"
-        ? { nombre, correo: `${nombre}@mail.com`, password: "1234" }
+        ? { nombre, correo: `${nombre}@mail.com`, telefono: 600000000 }
         : { nombre, genero: "Desconocido", stock: 1 };
 
     // fetch sin catch

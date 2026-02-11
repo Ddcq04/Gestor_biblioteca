@@ -2,7 +2,7 @@
 CREATE TABLE socio (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     nombre VARCHAR(60) NOT NULL,
-    contrasena VARCHAR(255) NOT NULL,
+    telefono INT NOT NULL,
     correo VARCHAR(100) NOT NULL
 );
 
@@ -26,12 +26,12 @@ CREATE TABLE prestamo (
 
 --INSERCION DE DATOS
 --SOCIO
-INSERT INTO socio (nombre, contrasena, correo) VALUES 
-('Juan Pérez', '1234abc', 'juan.perez@email.com'),
-('Ana García', 'pass789', 'ana.garcia@email.com'),
-('Luis Rodríguez', 'admin2026', 'luis.rod@email.com'),
-('Marta López', 'marta123', 'marta.lopez@email.com'),
-('Carlos Sánchez', 'charly_99', 'carlos.s@email.com');
+INSERT INTO socio (nombre, telefono, correo) VALUES 
+('Juan Pérez', 600123456, 'juan.perez@email.com'),
+('Ana García', 611987654, 'ana.garcia@email.com'),
+('Luis Rodríguez', 622445566, 'luis.rod@email.com'),
+('Marta López', 633112233, 'marta.lopez@email.com'),
+('Carlos Sánchez', 644778899, 'carlos.s@email.com');
 --LIBRO
 INSERT INTO libro (nombre, genero, stock) VALUES 
 ('Don Quijote de la Mancha', 'Clásico', 5),

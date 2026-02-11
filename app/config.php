@@ -46,10 +46,10 @@ class AccesoDatos {
         // Construccion de las consultas 
         $this->dbh->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
         try {
-        $this->stmt_creaSocio  = $this->dbh->prepare("insert into socio (nombre,contrasena,correo) values(?,?,?)");
+        $this->stmt_creaSocio  = $this->dbh->prepare("insert into socio (nombre,telefono,correo) values(?,?,?)");
         $this->stmt_creaLibro = $this->dbh->prepare("insert into libro(nombre,genero,stock) values(?,?,?)");
         $this->stmt_creaPrestamo = $this->dbh->prepare("insert into prestamo (socio_id,libro_id,fecha_prestamo,fecha_vencimiento) values (:socio_id,:libro_id,:f_prestamo,:f_vencimiento)");
-        $this->stmt_modSocio   = $this->dbh->prepare("update socio set nombre=:nombre, contrasena=:contrasena, correo=:correo where id=:id_socio");
+        $this->stmt_modSocio   = $this->dbh->prepare("update socio set nombre=:nombre, telefono=:telefono, correo=:correo where id=:id_socio");
         $this->stmt_modPrestamo = $this->dbh->prepare("update prestamo set fecha_devolucion =:f_devolucion where socio_id =:socio_id and libro_id =:libro_id and fecha_devolucion is null");
         $this->stmt_socio  = $this->dbh->prepare("select * from socio where id =:id");
         $this->stmt_libro  = $this->dbh->prepare("select * from libro where id =:id");
@@ -89,7 +89,7 @@ class AccesoDatos {
     //Dar de alta a un Socio
  public function addUsuario($socio): bool {
     try {
-        $this->stmt_creaSocio->execute([$socio->nombre, $socio->password, $socio->correo]);
+        $this->stmt_creaSocio->execute([$socio->nombre, $socio->telefono, $socio->correo]);
         return true; // Si no lanza excepción, es exitoso
     } catch (PDOException $e) {
         error_log("Error al crear usuario: " . $e->getMessage());

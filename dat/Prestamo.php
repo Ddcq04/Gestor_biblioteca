@@ -1,11 +1,11 @@
 <?php
 class Prestamo {
-    private $id;
-    private $socio_id;
-    private $libro_id;
-    private $fecha_prestamo;
-    private $fecha_devolucion;
-    private $fecha_vencimiento;
+    public $id;
+    public $socio_id;
+    public $libro_id;
+    public $fecha_prestamo;
+    public $fecha_devolucion;
+    public $fecha_vencimiento;
 
     function __get($name){
         if(property_exists($this,$name)){
