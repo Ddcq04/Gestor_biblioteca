@@ -15,92 +15,161 @@
     <nav class="nav">
         <h1>Gestión de Biblioteca</h1>
         <ul>
-            <li><a href="#altas">Altas</a></li>
-            <li><a href="#modi">Modificación</a></li>
-            <li><a href="#consultas">Consultas</a></li>
+            <li><a href="#socio">Socios</a></li>
+            <li><a href="#modi">Libros</a></li>
+            <li><a href="#consultas">Prestamos</a></li>
         </ul>
     </nav>
 
     <!-- seccion 1 -->
     <main class="general">
-        <section id="altas" class="sec">
+
+        <section id="socio" class="sec">
+
+
             <div class="content">
                 <div class="content">
-                    <h3>Altas</h3>
 
                     <form class="form">
-                        <p>nuevo libro</p>
-                        <div class="miniform">
-                            <input type="text" placeholder="Título del Libro">
-                            <input type="text" placeholder="Género">
-                            <input type="text" placeholder="ID Ejemplar">
-                        </div>
-                        <button type="submit" class="btn">Adquirir Libro</button>
-                    </form>
-
-                    <hr>
-
-                    <form class="form">
-                        <p>nuevo socio</p>
+                        <h3>Nuevo socio </h3>
                         <div class="miniform">
                             <input type="text" placeholder="Nombre completo del Socio">
-                            <input type="text" placeholder="DNI">
+                            <input type="email" placeholder="correo: @gmail..">
+                            <input type="tel" placeholder="telefono">
                         </div>
                         <button type="submit" class="btn">Registrar Socio</button>
                     </form>
 
                     <hr>
 
-                    <form class="form">
-                        <p>registrar prestamo</p>
+                    <h3>Datos de socios </h3>
+
+                    <div class="tablecontainer">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>correo</th>
+                                    <th>contraseña</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaResultados">
+                                <tr>
+                                    <td>Raul Lionela</td>
+                                    <td>err@</td>
+                                    <td>****</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <hr>
+
+                    <form class="form" id="formModificar">
+                        <h3>Actualizar datos del socio </h3>
+
                         <div class="miniform">
-                            <label>Seleccionar Socio:</label>
-                            <select>
-                                <option>socio...</option>
-                            </select>
-
-                            <label>Seleccionar Libro:</label>
-                            <select>
-                                <option>libo Disponible...</option>
-                            </select>
-
-                            <label>fecha de Devolución:</label>
-                            <input type="date">
+                            <input type="text" id="modSocio" placeholder="Nombre Completo">
+                            <input type="email" id="modgmailSocio" placeholder="Correo Electrónico">
+                            <input type="text" id="modtelfSocio" placeholder="Teléfono">
                         </div>
-                        <button type="submit" class="btn">Crear Préstamo</button>
+
+                        <button type="submit" class="btn">Actualizar</button>
                     </form>
+
+                    <hr>
+
+
+
+
+
+
                 </div>
             </div>
         </section>
 
-        <!-- seccion 2 -->
+        <!-- seccion 2 ---------------------------------------------------------------->
         <section id="modi" class="sec">
             <div class="content">
                 <div class="content">
-                    <h3>Modificación de Usuario</h3>
 
-                    <div class="miniform">
-                        <label>Buscar socio por ID:</label>
-                        <div>
-                            <input type="text" id="idSocioBusqueda" placeholder="Ej: 1025">
-                            <button type="button" class="btn">Cargar Datos</button>
-                        </div>
-                    </div>
+                    <h3>Alta de libros</h3>
 
                     <form class="form" id="formModificar">
-                        <p>Datos actuales socio:</p>
                         <div class="miniform">
-                            <label for="modNombreSocio">Nombre Completo</label>
-                            <input type="text" id="modSocio" placeholder="Cargando...">
-
-                            <label for="modEmailSocio">Correo Electrónico</label>
-                            <input type="email" id="modgmailSocio" placeholder="Cargando">
-
-                            <label for="modTelfSocio">Teléfono</label>
-                            <input type="text" id="modtelfSocio" placeholder="Cargando">
+                            <input type="text" id="titulolibro" placeholder="Título del libro.">
+                            <input type="email" id="genero" placeholder="Género">
+                            <input type="text" id="ejemplar" placeholder="Ejemplar">
                         </div>
-                        <button type="submit" class="btn">Actualizar</button>
+                        <button type="submit" class="btn">Registrar libro</button>
                     </form>
+
+                    <hr>
+
+                    <h3>Consulta de libros por genero</h3>
+
+                    <form class="form" id="formModificar">
+                        <div class="miniform">
+                            <input type="email" id="genero" placeholder="Género">
+                        </div>
+                    </form>
+                    <button class="btn">Buscar</button>
+
+                    <div class="tablecontainer">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>nombre</th>
+                                    <th>genero</th>
+                                    <th>stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaResultados">
+                                <tr>
+                                    <td>****</td>
+                                    <td>Encontrando a Raul</td>
+                                    <td>aventura</td>
+                                    <td>23</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <hr>
+
+                    <h3>Dispobilidad de un determinado ejemplar</h3>
+                    <form class="form" id="formModificar">
+                        <div class="miniform">
+                            <input type="email" id="genero" placeholder="Género">
+                        </div>
+                    </form>
+                    <button class="btn">Buscar</button>
+
+                    <div class="tablecontainer">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>nombre</th>
+                                    <th>genero</th>
+                                    <th>stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaResultados">
+                                <tr>
+                                    <td>****</td>
+                                    <td>Encontrando a Raul</td>
+                                    <td>aventura</td>
+                                    <td>23</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
                 </div>
             </div>
         </section>
@@ -113,18 +182,10 @@
                     <h3>Consultas</h3>
 
                     <div class="seconsult">
-                        <input type="text" id="busquedaSocio" placeholder="Buscar socio..">
-
-                        <select>
-                            <option value="">Todos los géneros</option>
-                            <option value="aventura">Aventura</option>
-                            <option value="ciencia-ficcion">Ciencia Ficción</option>
-                        </select>
-
-
+                        <input type="text" id="busquedaSocio" placeholder="Nombre socio..">
+                        <button class="btn">Buscar</button>
                         <button class="btn">Vencidos</button>
                         <button class="btn">No Vencidos</button>
-                        <button class="btn">Histórico (Devueltos)</button>
 
                     </div>
 
