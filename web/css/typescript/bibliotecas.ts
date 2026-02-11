@@ -1,8 +1,9 @@
 // bibliotecas.ts
-export{}
+export {}
 
 document.addEventListener("DOMContentLoaded", () => {
-    // BOTONES DE FILTROS
+
+    // --- BOTONES DE FILTROS (solo si existen) ---
     const btnTodos = document.getElementById("btnTodos");
     const btnVencidos = document.getElementById("btnVencidos");
     const btnNoDevueltos = document.getElementById("btnNoDevueltos");
@@ -11,17 +12,28 @@ document.addEventListener("DOMContentLoaded", () => {
     btnVencidos?.addEventListener("click", () => cargarPrestamos("vencidos"));
     btnNoDevueltos?.addEventListener("click", () => cargarPrestamos("noVencidos"));
 
-    // FORMULARIO ALTA
-    const formAlta = document.querySelector("form.form");
-    formAlta?.addEventListener("submit", (e) => {
+    // --- FORMULARIO ALTA SOCIO ---
+    const formAltaSocio = document.querySelector("form.form") as HTMLFormElement | null;
+    formAltaSocio?.addEventListener("submit", (e) => {
         e.preventDefault();
-        registrarAlta();
+        registrarAlta("Socio", formAltaSocio);
     });
 
-    // Cargar todos al iniciar
+    // --- FORMULARIO ALTA LIBRO ---
+    // Aquí seleccionamos el segundo formulario de la página (libro)
+    const formAltaLibro = document.querySelectorAll("form.form")[1] as HTMLFormElement | undefined;
+    formAltaLibro?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        registrarAlta("Libro", formAltaLibro);
+    });
+
+    // --- CARGAR PRÉSTAMOS AL INICIO ---
     cargarPrestamos("todos");
 });
 
+// ===============================================
+// Función para cargar préstamos según tipo
+// ===============================================
 async function cargarPrestamos(tipo: string) {
     let action = "";
     switch (tipo) {
@@ -41,18 +53,20 @@ async function cargarPrestamos(tipo: string) {
     }
 }
 
+// ===============================================
+// Función para pintar tabla de préstamos
+// ===============================================
 function pintarTabla(lista: any[]) {
-    const tbody = document.querySelector("tbody")!;
+    const tbody = document.getElementById("tablaResultados")!;
     tbody.innerHTML = "";
 
     lista.forEach((p) => {
         const tr = document.createElement("tr");
-        // Ajustamos los campos a los nombres de tu DB (socio_id, libro_id, etc.)
-        // Si quieres los nombres reales del socio/libro, tendrías que hacer un JOIN en SQL
+
         tr.innerHTML = `
-            <td>ID Socio: ${p.socio_id}</td>
-            <td>ID Libro: ${p.libro_id}</td>
-            <td>${p.fecha_prestamo}</td>
+            <td>${p.socio_id || p.nombre || "N/A"}</td>
+            <td>${p.libro_id || p.titulo || "N/A"}</td>
+            <td>${p.fecha_prestamo || p.fecha || "-"}</td>
             <td>${p.fecha_devolucion ? 'Devuelto' : 'Pendiente'}</td>
             <td>
                 ${!p.fecha_devolucion ? `<button class="btn-devolver" data-socio="${p.socio_id}" data-libro="${p.libro_id}">Devolver</button>` : ""}
@@ -61,8 +75,8 @@ function pintarTabla(lista: any[]) {
 
         const btnDevolver = tr.querySelector(".btn-devolver");
         btnDevolver?.addEventListener("click", () => {
-            const sId = parseInt(btnDevolver.getAttribute("data-socio")!);
-            const lId = parseInt(btnDevolver.getAttribute("data-libro")!);
+            const sId = parseInt(btnDevolver.getAttribute("data-socio") || "0");
+            const lId = parseInt(btnDevolver.getAttribute("data-libro") || "0");
             devolverLibro(sId, lId);
         });
 
@@ -70,6 +84,9 @@ function pintarTabla(lista: any[]) {
     });
 }
 
+// ===============================================
+// Función para devolver un libro
+// ===============================================
 async function devolverLibro(socio_id: number, libro_id: number) {
     try {
         const response = await fetch(`server.php?action=libroDevuelto&socio_id=${socio_id}&libro_id=${libro_id}`, {
@@ -84,35 +101,57 @@ async function devolverLibro(socio_id: number, libro_id: number) {
     }
 }
 
-async function registrarAlta() {
-    const form = document.querySelector("form.form")!;
-    const select = form.querySelector("select")!;
-    const inputNombre = form.querySelector("input[type=text]")!;
-    const tipo = (select as HTMLSelectElement).value;
-    const nombre = (inputNombre as HTMLInputElement).value;
+// ===============================================
+// Función general para registrar socio o libro
+// ===============================================
+async function registrarAlta(tipo: "Socio" | "Libro", form: HTMLFormElement) {
+    const inputs = form.querySelectorAll("input");
+    let datos: any;
 
-    if (!nombre) {
-        alert("Debe ingresar un nombre");
-        return;
+    if (tipo === "Socio") {
+        const nombre = (inputs[0] as HTMLInputElement).value.trim();
+        const correo = (inputs[1] as HTMLInputElement).value.trim() || `${nombre}@mail.com`;
+        const telefono = parseInt((inputs[2] as HTMLInputElement).value) || 600000000;
+
+        if (!nombre) {
+            alert("Debe ingresar un nombre");
+            return;
+        }
+
+        datos = { nombre, correo, telefono };
+    } else {
+        const nombre = (inputs[0] as HTMLInputElement).value.trim();
+        const genero = (inputs[1] as HTMLInputElement).value.trim() || "Desconocido";
+        const stock = parseInt((inputs[2] as HTMLInputElement).value) || 1;
+
+        if (!nombre) {
+            alert("Debe ingresar un nombre de libro");
+            return;
+        }
+
+        datos = { nombre, genero, stock };
     }
 
     const action = tipo === "Socio" ? "altaSocio" : "altaLibro";
-    const datos = tipo === "Socio"
-        ? { nombre, correo: `${nombre}@mail.com`, telefono: 600000000 }
-        : { nombre, genero: "Desconocido", stock: 1 };
 
-    // fetch sin catch
-    const response = await fetch(`server.php?action=${action}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos)
-    });
+    try {
+        const response = await fetch(`server.php?action=${action}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+        });
 
-    const json = await response.json(); // <-- ya es objeto JS
-    console.log("RAW PHP RESPONSE:", json);
-    alert(json.mensaje);
+        const json = await response.json();
+        console.log("RAW PHP RESPONSE:", json);
+        alert(json.mensaje);
 
-    // Limpiar input y recargar tabla
-    (inputNombre as HTMLInputElement).value = "";
-    cargarPrestamos("todos");
+        // Limpiar inputs
+        inputs.forEach(i => (i as HTMLInputElement).value = "");
+
+        // Recargar tabla de préstamos
+        cargarPrestamos("todos");
+    } catch (err) {
+        console.error(err);
+        alert("Error al registrar " + tipo);
+    }
 }
