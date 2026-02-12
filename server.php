@@ -1,49 +1,26 @@
 <?php
-// server.php
-include_once "app/config.php";
+include_once "app/config.php"; // Donde tienes AccesoDatos
 include_once "app/funciones.php";
 
-header('Content-Type: application/json');
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-
-// Capturamos la acción
 $action = $_GET['action'] ?? '';
-
-// Leemos el JSON del cuerpo (para POST y PUT)
 $input = json_decode(file_get_contents("php://input"));
+header('Content-Type: application/json');
 
-switch($action){
-    case 'altaSocio': 
-        altaSocio($input); 
-        break;
-
-    case 'altaLibro': 
-        altaLibro($input); 
-        break;
-
-    case 'prestamosSocio': 
-        $socio_id = $_GET['socio_id'] ?? 1; 
-        prestamosSocio($socio_id);
-        break;
-
-    case 'prestamosVencidos': 
-        prestamosVencidos(); 
-        break;
-
-    case 'prestamosnoVencidos': 
-        prestamosnoVencidos(); 
-        break;
-
-    case 'libroDevuelto': 
-        $socio_id = $_GET['socio_id'] ?? null;
-        $libro_id = $_GET['libro_id'] ?? null;
-        libroDevuelto($socio_id, $libro_id); 
-        break;
-
-    default: 
-        http_response_code(404);
-        echo json_encode(["mensaje" => "Acción '$action' no encontrada"]);
-        break;
+switch($action) {
+    case 'altaSocio': f_altaSocio($input); break;
+    case 'modSocio':  f_modSocio($_GET['id'], $input); break;
+    case 'altaLibro': f_altaLibro($input); break;
+    case 'prestamo':  f_prestamo($input); break;
+    // Consultas de búsqueda para que el bibliotecario no use IDs
+    case 'buscarSocioNombre': f_buscarSocioNombre($_GET['nombre'] ?? ''); break;
+    case 'buscarLibroNombre': f_buscarLibroNombre($_GET['nombre'] ?? ''); break;
+    case 'getGeneros': echo json_encode(AccesoDatos::getModelo()->getGenerosDisponibles()); break;
+    case 'devolver':  f_devolucion($input); break;
+    case 'getSocio':  f_getSocio($_GET['id']); break;
+    case 'porGenero': f_librosGenero($_GET['genero']); break;
+    case 'checkStock': f_disponibilidad($_GET['id']); break;
+    case 'vencidos':   f_vencidos(); break;
+    case 'noVencidos': f_noVencidos(); break;
+    case 'historial':  f_historialDev(); break;
 }
+?>

@@ -1,55 +1,66 @@
 <?php
-include_once "dat/Prestamo.php";
-include_once "dat/Socio.php";
-include_once "dat/Libro.php";
+// funciones.php
 
-function altaSocio($socio) {
-    $db = AccesoDatos::getModelo();
-    // En tu AccesoDatos, el objeto usa ->password, asegúrate que coincida
-    $exito = $db->addUsuario($socio);
-    echo json_encode(["mensaje" => $exito ? "Socio creado con éxito" : "Error al crear socio"]);
-    exit;
+function responder($res, $msgExito = "Operación realizada", $msgError = "Error al procesar") {
+    echo json_encode([
+        "status" => (bool)$res,
+        "mensaje" => $res ? $msgExito : $msgError,
+        "datos" => is_bool($res) ? null : $res
+    ]);
 }
 
-function altaLibro($libro) {
-    $db = AccesoDatos::getModelo();
-    $exito = $db->addLibro($libro);
-    echo json_encode(["mensaje" => $exito ? "Libro creado con éxito" : "Error al crear libro"]);
-    exit;
+// NUEVAS: Búsquedas proactivas
+function f_buscarSocioNombre($nombre) {
+    $res = AccesoDatos::getModelo()->getSocioPorNombre($nombre);
+    echo json_encode($res ?: ["error" => "No encontrado"]);
 }
 
-function libroDevuelto($socio_id, $libro_id){
-    $db = AccesoDatos::getModelo();
-    $socio = $db->getSocio($socio_id);
-    $libro = $db->getLibro($libro_id);
-    $f_devolucion = date("Y-m-d H:i:s");
-
-    if (!$socio || !$libro) {
-        echo json_encode(["mensaje" => "Socio o Libro inexistente"]);
-        exit;
-    }
-
-    $exito = $db->modPrestamo($socio, $libro, $f_devolucion);
-    echo json_encode(["mensaje" => $exito ? "Devolución registrada" : "No hay préstamo activo"]);
-    exit;
+function f_buscarLibroNombre($nombre) {
+    $res = AccesoDatos::getModelo()->getLibroPorNombre($nombre);
+    echo json_encode($res ?: ["error" => "No encontrado"]);
 }
 
-function prestamosSocio($socio_id){
-    $db = AccesoDatos::getModelo();
-    $socio = $db->getSocio($socio_id);
-    $prestamos = $db->getPrestamoSocio($socio);
-    echo json_encode($prestamos ?: []);
-    exit;
+// ACCIONES
+function f_altaSocio($input) { responder(AccesoDatos::getModelo()->addUsuario($input), "Socio añadido"); }
+
+function f_modSocio($id, $input) { 
+    $input->id = $id; 
+    responder(AccesoDatos::getModelo()->modSocio($input), "Socio actualizado correctamente"); 
 }
 
-function prestamosVencidos(){
-    $db = AccesoDatos::getModelo();
-    echo json_encode($db->getVencidos() ?: []);
-    exit;
+function f_altaLibro($input) { responder(AccesoDatos::getModelo()->addLibro($input), "Libro registrado en inventario"); }
+
+function f_prestamo($input) {
+    $f_p = date("Y-m-d H:i:s");
+    $f_v = date("Y-m-d", strtotime("+15 days"));
+    responder(AccesoDatos::getModelo()->addPrestamo($input->socio_id, $input->libro_id, $f_p, $f_v), "Préstamo registrado");
 }
 
-function prestamosnoVencidos(){
-    $db = AccesoDatos::getModelo();
-    echo json_encode($db->getnoVencidos() ?: []);
-    exit;
+function f_devolucion($input) {
+    $s = new stdClass(); $s->id = $input->socio_id;
+    $l = new stdClass(); $l->id = $input->libro_id;
+    responder(AccesoDatos::getModelo()->modPrestamo($s, $l, date("Y-m-d H:i:s")), "Devolución completada");
 }
+
+// CONSULTAS
+function f_getSocio($id) { echo json_encode(AccesoDatos::getModelo()->getSocio($id)); }
+function f_librosGenero($g) { echo json_encode(AccesoDatos::getModelo()->getLibros($g)); }
+function f_disponibilidad($id) { 
+    $res = AccesoDatos::getModelo()->getLibroDisponible($id);
+    responder($res, "Hay stock de este ejemplar", "Ejemplar no disponible o sin stock"); 
+}
+function f_vencidos() { 
+    $res = AccesoDatos::getModelo()->getVencidos();
+    echo json_encode($res ?: []); 
+}
+
+function f_noVencidos() { 
+    $res = AccesoDatos::getModelo()->getnoVencidos();
+    echo json_encode($res ?: []); 
+}
+
+function f_historialDev() { 
+    $res = AccesoDatos::getModelo()->getDevoluciones();
+    echo json_encode($res ?: []); 
+}
+?>

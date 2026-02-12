@@ -18,7 +18,10 @@ class AccesoDatos {
     private $stmt_modPrestamo  = null;
     private $stmt_socio  = null;
     private $stmt_libro  = null;
+    private $stmt_socioNombre = null; 
+    private $stmt_libroNombre = null;
     private $stmt_libros  = null;
+    private $stmt_getGeneros = null;
     private $stmt_libroDisponible  = null;
     private $stmt_prestamosDevueltos = null;
     private $stmt_prestamosVencidos  = null;
@@ -53,12 +56,15 @@ class AccesoDatos {
         $this->stmt_modPrestamo = $this->dbh->prepare("update prestamo set fecha_devolucion =:f_devolucion where socio_id =:socio_id and libro_id =:libro_id and fecha_devolucion is null");
         $this->stmt_socio  = $this->dbh->prepare("select * from socio where id =:id");
         $this->stmt_libro  = $this->dbh->prepare("select * from libro where id =:id");
+        $this->stmt_getGeneros = $this->dbh->prepare("select distinct genero from libro");
         $this->stmt_libros = $this->dbh->prepare("select * from libro where genero =:genero");
         $this->stmt_libroDisponible = $this->dbh->prepare("select * from libro where id =:id_libro and stock > 0");
         $this->stmt_prestamosDevueltos = $this->dbh->prepare("select * from prestamo where socio_id =:socio_id and fecha_devolucion is not null");
         $this->stmt_prestamosVencidos = $this->dbh->prepare("select * from prestamo where fecha_vencimiento < now() and fecha_devolucion is null");
         $this->stmt_prestamosNoVencidos = $this->dbh->prepare("select * from prestamo where fecha_vencimiento >= now() and fecha_devolucion is null");
         $this->stmt_devoluciones = $this->dbh->prepare("select * from prestamo where fecha_devolucion is not null");
+        $this->stmt_socioNombre = $this->dbh->prepare("select * from socio where nombre LIKE ? LIMIT 1");
+        $this->stmt_libroNombre = $this->dbh->prepare("select * from libro where nombre LIKE ? LIMIT 1");
         } catch ( PDOException $e){
             echo " Error al crear la sentencias ".$e->getMessage();
             exit();
@@ -84,6 +90,18 @@ class AccesoDatos {
             $obj->stmt_devoluciones  = null;
             self::$modelo = null; // Borro el objeto.
         }
+    }
+    
+    public function getSocioPorNombre($nombre) {
+        $this->stmt_socioNombre->setFetchMode(PDO::FETCH_CLASS, 'Socio');
+        $this->stmt_socioNombre->execute(["%$nombre%"]);
+        return $this->stmt_socioNombre->fetch();
+    }
+
+    public function getLibroPorNombre($nombre) {
+        $this->stmt_libroNombre->setFetchMode(PDO::FETCH_CLASS, 'Libro');
+        $this->stmt_libroNombre->execute(["%$nombre%"]);
+        return $this->stmt_libroNombre->fetch();
     }
 
     //Dar de alta a un Socio
@@ -121,9 +139,9 @@ public function addLibro($libro): bool {
 
      //Modificar los datos de un Socio
     public function modSocio($socio):bool{
-        $this->stmt_modSocio->bindValue(':id',$socio->id);
+        $this->stmt_modSocio->bindValue(':id_socio',$socio->id);
         $this->stmt_modSocio->bindValue(':nombre',$socio->nombre);
-        $this->stmt_modSocio->bindValue(':password',$socio->password);
+        $this->stmt_modSocio->bindValue(':telefono',$socio->telefono);
         $this->stmt_modSocio->bindValue(':contrasena',$socio->correo);
         $this->stmt_modSocio->execute();
         $resu = ($this->stmt_modSocio->rowCount () == 1);
@@ -166,6 +184,17 @@ public function addLibro($libro): bool {
         return $libro;
     }
 
+    //Lista de generos previstos en la bbdd
+    public function getGenerosDisponibles():array{
+        $tgeneros = [];
+        if ( $this->stmt_getGeneros->execute() ){
+            while ( $genero = $this->stmt_getGeneros->fetch()){
+               $tgeneros[]= $genero;
+            }
+        }
+        return $tgeneros;
+    }
+    
     //Devuelvo la lista de libro segun el genero
     public function getLibros($genero):array {
         $tlibros = [];

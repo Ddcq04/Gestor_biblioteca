@@ -1,233 +1,106 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Biblioteca</title>
-    <link rel="stylesheet" href="biblioteca.css">
-
-
+    <link rel="stylesheet" href="../web/css/biblioteca.css">
 </head>
-
 <body>
-
     <nav class="nav">
         <h1>Gestión de Biblioteca</h1>
         <ul>
             <li><a href="#socio">Socios</a></li>
-            <li><a href="#modi">Libros</a></li>
-            <li><a href="#consultas">Prestamos</a></li>
+            <li><a href="#libros">Libros</a></li>
+            <li><a href="#consultas">Préstamos</a></li>
         </ul>
     </nav>
 
-    <!-- seccion 1 -->
     <main class="general">
-
         <section id="socio" class="sec">
-
-
             <div class="content">
-                <div class="content">
-
-                    <form class="form">
-                        <h3>Nuevo socio </h3>
-                        <div class="miniform">
-                            <input type="text" placeholder="Nombre completo del Socio">
-                            <input type="email" placeholder="correo: @gmail..">
-                            <input type="tel" placeholder="telefono">
-                        </div>
-                        <button type="submit" class="btn">Registrar Socio</button>
-                    </form>
-
-                    <hr>
-
-                    <h3>Datos de socios </h3>
-
-                    <div class="tablecontainer">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>correo</th>
-                                    <th>contraseña</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaResultados">
-                                <tr>
-                                    <td>Raul Lionela</td>
-                                    <td>err@</td>
-                                    <td>****</td>
-
-                                </tr>
-                            </tbody>
-                        </table>
+                <h3>Nuevo Socio</h3>
+                <form class="form" id="formNuevoSocio">
+                    <div class="miniform">
+                        <input type="text" id="nomS" placeholder="Nombre completo" required>
+                        <input type="email" id="corS" placeholder="Correo electrónico" required>
+                        <input type="tel" id="telS" placeholder="Teléfono" required>
                     </div>
-
-                    <hr>
-
-                    <form class="form" id="formModificar">
-                        <h3>Actualizar datos del socio </h3>
-
-                        <div class="miniform">
-                            <input type="text" id="modSocio" placeholder="Nombre Completo">
-                            <input type="email" id="modgmailSocio" placeholder="Correo Electrónico">
-                            <input type="text" id="modtelfSocio" placeholder="Teléfono">
-                        </div>
-
-                        <button type="submit" class="btn">Actualizar</button>
-                    </form>
-
-                    <hr>
-
-
-
-
-
-
+                    <button type="submit" class="btn">Registrar Socio</button>
+                </form>
+                <hr>
+                <h3>Buscador de Socios</h3>
+                <div class="seconsult">
+                    <input type="text" id="busqNombreSocio" placeholder="Nombre del socio...">
+                    <button id="btnBuscarSocio" class="btn">Buscar</button>
                 </div>
+                <div id="resSocio" style="display:none; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-top:10px;">
+                    <p id="infoSocioText"></p>
+                    <button id="btnActivarMod" class="btn" style="background:#e67e22">Modificar Datos</button>
+                </div>
+                <form id="formModSocio" class="form" style="display:none; margin-top:15px;">
+                    <input type="hidden" id="modIdS">
+                    <div class="miniform">
+                        <input type="text" id="modSocio" placeholder="Nombre">
+                        <input type="email" id="modgmailSocio" placeholder="Correo">
+                        <input type="text" id="modtelfSocio" placeholder="Teléfono">
+                    </div>
+                    <button type="submit" class="btn">Guardar Cambios</button>
+                </form>
             </div>
         </section>
 
-        <!-- seccion 2 ---------------------------------------------------------------->
-        <section id="modi" class="sec">
+        <section id="libros" class="sec">
             <div class="content">
-                <div class="content">
-
-                    <h3>Alta de libros</h3>
-
-                    <form class="form" id="formModificar">
-                        <div class="miniform">
-                            <input type="text" id="titulolibro" placeholder="Título del libro.">
-                            <input type="email" id="genero" placeholder="Género">
-                            <input type="text" id="ejemplar" placeholder="Ejemplar">
+                <h3>Alta de Libros</h3>
+                <form class="form" id="formNuevoLibro">
+                    <div class="miniform">
+                        <input type="text" id="titulolibro" placeholder="Título">
+                        <div class="seconsult">
+                            <select id="busqGenLibro">
+                                <option value="">Cargando géneros...</option>
+                            </select>
+                            <button id="btnBuscarLibro" class="btn">Filtrar</button>
                         </div>
-                        <button type="submit" class="btn">Registrar libro</button>
-                    </form>
-
-                    <hr>
-
-                    <h3>Consulta de libros por genero</h3>
-
-                    <form class="form" id="formModificar">
-                        <div class="miniform">
-                            <input type="email" id="genero" placeholder="Género">
-                        </div>
-                    </form>
-                    <button class="btn">Buscar</button>
-
-                    <div class="tablecontainer">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>nombre</th>
-                                    <th>genero</th>
-                                    <th>stock</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaResultados">
-                                <tr>
-                                    <td>****</td>
-                                    <td>Encontrando a Raul</td>
-                                    <td>aventura</td>
-                                    <td>23</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <input type="number" id="ejemplar" placeholder="Stock">
                     </div>
-
-                    <hr>
-
-                    <h3>Dispobilidad de un determinado ejemplar</h3>
-                    <form class="form" id="formModificar">
-                        <div class="miniform">
-                            <input type="email" id="genero" placeholder="Género">
-                        </div>
-                    </form>
-                    <button class="btn">Buscar</button>
-
-                    <div class="tablecontainer">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>nombre</th>
-                                    <th>genero</th>
-                                    <th>stock</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaResultados">
-                                <tr>
-                                    <td>****</td>
-                                    <td>Encontrando a Raul</td>
-                                    <td>aventura</td>
-                                    <td>23</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-
-
+                    <button type="submit" class="btn">Añadir Libro</button>
+                </form>
+                <hr>
+                <h3>Catálogo</h3>
+                <div class="seconsult">
+                    <input type="text" id="busqGenLibro" placeholder="Género o Título">
+                    <button id="btnBuscarLibro" class="btn">Consultar</button>
                 </div>
+                <div id="resLibro" style="display:none; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <p id="infoLibroText"></p>
+                    <button id="btnActivarPrestamo" class="btn" style="background:#27ae60">Generar Préstamo</button>
+                </div>
+                <form id="formPrestamoRapido" class="form" style="display:none; margin-top:15px; border: 1px solid #27ae60; padding:10px;">
+                    <input type="hidden" id="pLibroId">
+                    <label>ID del Socio que solicita el préstamo:</label>
+                    <input type="number" id="pSocioId" placeholder="ID Socio" required>
+                    <button type="submit" class="btn">Confirmar Préstamo</button>
+                </form>
             </div>
         </section>
 
-        <!-- seccion3 -->
         <section id="consultas" class="sec">
-
             <div class="content">
-                <div class="content">
-                    <h3>Consultas</h3>
-
-                    <div class="seconsult">
-                        <input type="text" id="busquedaSocio" placeholder="Nombre socio..">
-                        <button class="btn">Buscar</button>
-                        <button class="btn">Vencidos</button>
-                        <button class="btn">No Vencidos</button>
-
-                    </div>
-
-                    <div class="tablecontainer">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Socio</th>
-                                    <th>Libro (Género)</th>
-                                    <th>Plazo</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaResultados">
-                                <tr>
-                                    <td>Raul Lionela</td>
-                                    <td>Encontrando a Raul (Aventura)</td>
-                                    <td>2025-06-10</td>
-                                    <td><span class="badge">No Vencido</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <h3>Listados de Préstamos</h3>
+                <div class="seconsult">
+                    <button id="btnVencidos" class="btn">Vencidos</button>
+                    <button id="btnNoVencidos" class="btn">No Vencidos</button>
+                    <button id="btnHistorial" class="btn">Historial Devoluciones</button>
+                </div>
+                <div class="tablecontainer">
+                    <table id="tablaGral">
+                        <tbody id="tbodyGral"></tbody>
+                    </table>
                 </div>
             </div>
-
-
         </section>
     </main>
 
-
-    <footer class="aviso">
-        <ul>
-            <li><a href="#">Aviso legal</a></li>
-            <li><a href="#">Términos</a></li>
-            <li><a href="#">Privacidad</a></li>
-        </ul>
-        <p>© 2025 | Trabajo grupal de Ampliación</p>
-    </footer>
-
-    <script type="module" src="bibliotecas.js"></script>
-
+    <script type="module" src="../web/css/typescript/bibliotecas.js"></script>
 </body>
-
 </html>

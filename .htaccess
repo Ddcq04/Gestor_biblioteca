@@ -4,3 +4,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 # Si NO existe, envía todo a index.php
 RewriteRule ^(.*)$ server.php [L,QSA]
+
+#Para enrutar http://localhost/php/Proyectos/Gestion_de_biblioteca/server.php?action=prestamosSocio
