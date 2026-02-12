@@ -1,61 +1,84 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
+const API_URL = '../app/server.php';
 
-// Función central de comunicación
-function api(action, method = "GET", body = null) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const res = yield fetch(`server.php?action=${action}`, {
+async function api(action, method = "GET", body = null) {
+    try {
+        const url = `${API_URL}?action=${action}`;
+        const options = {
             method,
-            headers: { 'Content-Type': 'application/json' },
-            body: body ? JSON.stringify(body) : null
-        });
-        return yield res.json();
-    });
+            headers: { "Content-Type": "application/json" }
+        };
+        if (body) options.body = JSON.stringify(body);
+        
+        const res = await fetch(url, options);
+        if (!res.ok) throw new Error(`Error del servidor: ${res.status}`);
+        return await res.json();
+    } catch (error) {
+        console.error('Error en API:', error);
+        throw error;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    // --- 1. GESTIÓN DE SOCIOS ---
-    const btnBuscarSocio = document.getElementById("btnBuscarSocio");
-    const btnActivarMod = document.getElementById("btnActivarMod");
-    const formModSocio = document.getElementById("formModSocio");
-
-    // Buscar Socio por Nombre
-    btnBuscarSocio?.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-        const nom = document.getElementById("busqNombreSocio").value;
-        const s = yield api(`buscarSocioNombre&nombre=${nom}`);
-        
-        if (s && s.id) {
-            document.getElementById("resSocio").style.display = "block";
-            document.getElementById("infoSocioText").innerText = `Socio: ${s.nombre} (ID: ${s.id})`;
-            
-            // Llenar campos ocultos y visibles para modificar
-            document.getElementById("modIdS").value = s.id;
-            document.getElementById("modSocio").value = s.nombre;
-            document.getElementById("modgmailSocio").value = s.correo;
-            document.getElementById("modtelfSocio").value = s.telefono;
-            btnActivarMod.style.display = "inline-block";
-        } else {
-            alert("Socio no encontrado");
-            document.getElementById("resSocio").style.display = "none";
+    cargarGeneros();
+    cargarTodosLosLibros();
+    
+    // ==== EVENT LISTENERS ====
+    
+    // Alta socio
+    document.getElementById("formNuevoSocio")?.addEventListener("submit", async e => {
+        e.preventDefault();
+        const data = {
+            nombre: document.getElementById("nomS").value,
+            telefono: document.getElementById("telS").value,
+            correo: document.getElementById("corS").value
+        };
+        try {
+            const res = await api("altaSocio", "POST", data);
+            alert(res.mensaje);
+            if (res.status) {
+                e.target.reset();
+            }
+        } catch (error) {
+            alert("Error al registrar socio");
         }
-    }));
-
-    // Mostrar/Ocultar formulario de edición
-    btnActivarMod?.addEventListener("click", () => {
-        formModSocio.style.display = formModSocio.style.display === "none" ? "flex" : "none";
     });
 
-    // Enviar Modificación (Corregido: ID en URL + Datos en Body)
-    formModSocio?.addEventListener("submit", (e) => __awaiter(this, void 0, void 0, function* () {
+    // Buscar socio
+    document.getElementById("btnBuscarSocio")?.addEventListener("click", async () => {
+        const nombre = document.getElementById("busqNombreSocio").value;
+        if (!nombre) {
+            alert("Ingrese un nombre para buscar");
+            return;
+        }
+        try {
+            const socio = await api(`buscarSocioNombre&nombre=${encodeURIComponent(nombre)}`);
+            if (!socio) {
+                alert("Socio no encontrado");
+                return;
+            }
+            document.getElementById("infoSocioText").innerHTML = `
+                <strong>ID:</strong> ${socio.id}<br>
+                <strong>Nombre:</strong> ${socio.nombre}<br>
+                <strong>Email:</strong> ${socio.correo}<br>
+                <strong>Teléfono:</strong> ${socio.telefono}
+            `;
+            document.getElementById("resSocio").style.display = "block";
+            document.getElementById("modIdS").value = socio.id;
+            document.getElementById("modSocio").value = socio.nombre;
+            document.getElementById("modgmailSocio").value = socio.correo;
+            document.getElementById("modtelfSocio").value = socio.telefono;
+        } catch (error) {
+            alert("Error al buscar socio");
+        }
+    });
+
+    // Activar formulario de modificación
+    document.getElementById("btnActivarMod")?.addEventListener("click", () => {
+        document.getElementById("formModSocio").style.display = "block";
+    });
+
+    // Modificar socio
+    document.getElementById("formModSocio")?.addEventListener("submit", async e => {
         e.preventDefault();
         const id = document.getElementById("modIdS").value;
         const data = {
@@ -63,86 +86,201 @@ document.addEventListener("DOMContentLoaded", () => {
             correo: document.getElementById("modgmailSocio").value,
             telefono: document.getElementById("modtelfSocio").value
         };
-        const res = yield api(`modSocio&id=${id}`, "POST", data);
-        alert(res.mensaje);
-        if(res.status) location.reload();
-    }));
-
-    // --- 2. GESTIÓN DE LIBROS ---
-    
-    // Llenar Select de Géneros dinámicamente
-    api("getGeneros").then(generos => {
-        const select = document.getElementById("busqGenLibro");
-        if (select && Array.isArray(generos)) {
-            select.innerHTML = generos.map(g => `<option value="${g}">${g}</option>`).join("");
+        try {
+            const res = await api(`modSocio&id=${id}`, "POST", data);
+            alert(res.mensaje);
+            if (res.status) {
+                document.getElementById("formModSocio").style.display = "none";
+                document.getElementById("resSocio").style.display = "none";
+            }
+        } catch (error) {
+            alert("Error al modificar socio");
         }
     });
 
-    // Buscar libros por Género y pintar tabla
-    document.getElementById("btnBuscarLibro")?.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-        const gen = document.getElementById("busqGenLibro").value;
-        const tbody = document.getElementById("tbodyGral");
-        const libros = yield api(`porGenero&genero=${gen}`);
-        
-        if (Array.isArray(libros) && tbody) {
-            tbody.innerHTML = libros.map(l => `
-                <tr>
-                    <td>${l.nombre}</td>
-                    <td>${l.genero}</td>
-                    <td>Stock: ${l.stock}</td>
-                    <td><button class="btn sel-libro" data-id="${l.id}" data-nombre="${l.nombre}">Seleccionar</button></td>
-                </tr>
-            `).join("");
-
-            // Evento para los botones creados dinámicamente
-            document.querySelectorAll(".sel-libro").forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    const bid = e.target.getAttribute("data-id");
-                    const bnom = e.target.getAttribute("data-nombre");
-                    
-                    document.getElementById("resLibro").style.display = "block";
-                    document.getElementById("infoLibroText").innerText = `Libro: ${bnom}`;
-                    document.getElementById("pLibroId").value = bid;
-                    document.getElementById("formPrestamoRapido").style.display = "flex";
-                });
-            });
-        }
-    }));
-
-    // --- 3. PRÉSTAMOS Y CONSULTAS ---
-
-    // Generar Préstamo
-    document.getElementById("formPrestamoRapido")?.addEventListener("submit", (e) => __awaiter(this, void 0, void 0, function* () {
+    // Alta libro
+    document.getElementById("formNuevoLibro")?.addEventListener("submit", async e => {
         e.preventDefault();
         const data = {
-            socio_id: document.getElementById("pSocioId").value,
-            libro_id: document.getElementById("pLibroId").value
+            nombre: document.getElementById("titulolibro").value,
+            genero: document.getElementById("busqGenLibro").value,
+            stock: parseInt(document.getElementById("ejemplar").value)
         };
-        const res = yield api("prestamo", "POST", data);
-        alert(res.mensaje);
-        if(res.status) location.reload();
-    }));
-
-    // Botones de Tablas Generales
-    document.getElementById("btnVencidos")?.addEventListener("click", () => cargarTablaConsultas("vencidos"));
-    document.getElementById("btnNoVencidos")?.addEventListener("click", () => cargarTablaConsultas("noVencidos"));
-    document.getElementById("btnHistorialGral")?.addEventListener("click", () => cargarTablaConsultas("historial"));
-});
-
-function cargarTablaConsultas(action) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const data = yield api(action);
-        const tbody = document.getElementById("tbodyGral");
-        if (tbody && Array.isArray(data)) {
-            tbody.innerHTML = data.length === 0 
-                ? "<tr><td colspan='3'>Sin datos</td></tr>" 
-                : data.map(item => `
-                    <tr>
-                        <td>Socio: ${item.socio_id}</td>
-                        <td>Libro: ${item.libro_id}</td>
-                        <td>Vence: ${item.fecha_vencimiento}</td>
-                    </tr>
-                `).join("");
+        try {
+            const res = await api("altaLibro", "POST", data);
+            alert(res.mensaje);
+            if (res.status) {
+                e.target.reset();
+                cargarGeneros();
+                cargarTodosLosLibros();
+            }
+        } catch (error) {
+            alert("Error al agregar libro");
         }
     });
+
+    // Filtrar libros por género
+    document.getElementById("btnFiltrarLibro")?.addEventListener("click", async () => {
+        const genero = document.getElementById("busqLibroCatalogo").value;
+        await cargarLibrosPorGenero(genero);
+    });
+
+    // Préstamo rápido
+    document.getElementById("formPrestamoRapido")?.addEventListener("submit", async e => {
+        e.preventDefault();
+        const libroId = document.getElementById("pLibroId").value;
+        const socioId = document.getElementById("pSocioId").value;
+        
+        if (!libroId || !socioId) {
+            alert("Complete todos los campos");
+            return;
+        }
+        
+        const data = {
+            socio_id: parseInt(socioId),
+            libro_id: parseInt(libroId)
+        };
+        
+        try {
+            const res = await api("prestamo", "POST", data);
+            alert(res.mensaje);
+            if (res.status) {
+                document.getElementById("formPrestamoRapido").style.display = "none";
+                document.getElementById("pSocioId").value = "";
+                cargarTodosLosLibros();
+            }
+        } catch (error) {
+            alert("Error al registrar préstamo");
+        }
+    });
+
+    // Botones de consulta de préstamos
+    document.getElementById("btnVencidos")?.addEventListener("click", async () => {
+        try {
+            const prestamos = await api("vencidos");
+            mostrarPrestamos(prestamos, "Préstamos Vencidos");
+        } catch (error) {
+            alert("Error al cargar préstamos vencidos");
+        }
+    });
+
+    document.getElementById("btnNoVencidos")?.addEventListener("click", async () => {
+        try {
+            const prestamos = await api("noVencidos");
+            mostrarPrestamos(prestamos, "Préstamos No Vencidos");
+        } catch (error) {
+            alert("Error al cargar préstamos no vencidos");
+        }
+    });
+
+    document.getElementById("btnHistorial")?.addEventListener("click", async () => {
+        try {
+            const prestamos = await api("historial");
+            mostrarPrestamos(prestamos, "Historial de Devoluciones");
+        } catch (error) {
+            alert("Error al cargar historial");
+        }
+    });
+});
+
+// ==== FUNCIONES AUXILIARES ====
+
+async function cargarGeneros() {
+    try {
+        const generos = await api("getGeneros");
+        const selectGen = document.getElementById("busqGenLibro");
+        const selectFiltro = document.getElementById("busqLibroCatalogo");
+        
+        let options = '<option value="">Seleccione un género</option>';
+        options += generos.map(g => `<option value="${g}">${g}</option>`).join("");
+        
+        selectGen.innerHTML = options;
+        if (selectFiltro) {
+            selectFiltro.innerHTML = '<option value="">Todos los géneros</option>' + 
+                generos.map(g => `<option value="${g}">${g}</option>`).join("");
+        }
+    } catch (error) {
+        console.error("Error al cargar géneros:", error);
+    }
+}
+
+async function cargarTodosLosLibros() {
+    try {
+        const libros = await api("getLibros");
+        mostrarLibros(libros);
+    } catch (error) {
+        console.error("Error al cargar libros:", error);
+    }
+}
+
+async function cargarLibrosPorGenero(genero) {
+    try {
+        const libros = await api(`getLibros&genero=${encodeURIComponent(genero)}`);
+        mostrarLibros(libros);
+    } catch (error) {
+        console.error("Error al cargar libros por género:", error);
+    }
+}
+
+function mostrarLibros(libros) {
+    const tbody = document.getElementById("tbodyGral");
+    if (!tbody) return;
+    
+    if (!libros || libros.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">No hay libros disponibles</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = libros.map(libro => `
+        <tr>
+            <td>${libro.id}</td>
+            <td>${libro.nombre}</td>
+            <td>${libro.genero}</td>
+            <td>${libro.stock}</td>
+            <td>
+                <button onclick="seleccionarLibro(${libro.id}, '${libro.nombre.replace(/'/g, "\\'")}')" 
+                        class="btn" style="background:#27ae60" 
+                        ${libro.stock <= 0 ? 'disabled' : ''}>
+                    Prestar
+                </button>
+            </td>
+        </tr>
+    `).join("");
+}
+
+window.seleccionarLibro = function(id, titulo) {
+    document.getElementById("pLibroId").value = id;
+    document.getElementById("resLibro").style.display = "block";
+    document.getElementById("infoLibroText").innerHTML = `
+        <strong>Libro seleccionado:</strong> ${titulo} (ID: ${id})<br>
+        Complete el ID del socio para realizar el préstamo.
+    `;
+    document.getElementById("formPrestamoRapido").style.display = "block";
+};
+
+function mostrarPrestamos(prestamos, titulo) {
+    const tbody = document.getElementById("tbodyPrestamos");
+    if (!tbody) return;
+    
+    if (!prestamos || prestamos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">No hay préstamos para mostrar</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = prestamos.map(p => {
+        const fecha = p.fecha_vencimiento ? new Date(p.fecha_vencimiento).toLocaleDateString() : '';
+        const estado = p.fecha_devolucion ? 'Devuelto' : 
+                      (new Date(p.fecha_vencimiento) < new Date() ? 'Vencido' : 'Activo');
+        
+        return `
+            <tr>
+                <td>${p.socio_id} - ${p.socio_nombre || ''}</td>
+                <td>${p.libro_id} - ${p.libro_nombre || ''}</td>
+                <td>${fecha}</td>
+                <td style="color: ${estado === 'Vencido' ? 'red' : estado === 'Activo' ? 'green' : 'gray'}">
+                    ${estado}
+                </td>
+            </tr>
+        `;
+    }).join("");
 }

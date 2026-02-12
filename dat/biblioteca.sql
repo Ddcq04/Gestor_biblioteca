@@ -1,41 +1,42 @@
---TABLAS
+CREATE DATABASE IF NOT EXISTS biblioteca;
+USE biblioteca;
+
 CREATE TABLE socio (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-    nombre VARCHAR(60) NOT NULL,
-    telefono INT NOT NULL,
-    correo VARCHAR(100) NOT NULL
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    correo VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE libro (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-    nombre VARCHAR(60) NOT NULL,
-    genero VARCHAR(70) NOT NULL,
-    stock INT NOT NULL
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(200) NOT NULL,
+    genero VARCHAR(50),
+    stock INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE prestamo (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    id INT AUTO_INCREMENT PRIMARY KEY,
     socio_id INT NOT NULL,
     libro_id INT NOT NULL,
     fecha_prestamo DATETIME NOT NULL,
-    fecha_devolucion DATETIME NULL, 
     fecha_vencimiento DATETIME NOT NULL,
-    FOREIGN KEY (socio_id) REFERENCES socio (id),
-    FOREIGN KEY (libro_id) REFERENCES libro (id)
+    fecha_devolucion DATETIME NULL,
+    FOREIGN KEY (socio_id) REFERENCES socio(id),
+    FOREIGN KEY (libro_id) REFERENCES libro(id),
+    INDEX (fecha_vencimiento),
+    INDEX (fecha_devolucion)
 );
 
---INSERCION DE DATOS
---SOCIO
-INSERT INTO socio (nombre, telefono, correo) VALUES 
-('Juan Pérez', 600123456, 'juan.perez@email.com'),
-('Ana García', 611987654, 'ana.garcia@email.com'),
-('Luis Rodríguez', 622445566, 'luis.rod@email.com'),
-('Marta López', 633112233, 'marta.lopez@email.com'),
-('Carlos Sánchez', 644778899, 'carlos.s@email.com');
---LIBRO
-INSERT INTO libro (nombre, genero, stock) VALUES 
-('Don Quijote de la Mancha', 'Clásico', 5),
-('Cien años de soledad', 'Realismo Mágico', 3),
-('Harry Potter y la Piedra Filosofal', 'Fantasía', 10),
-('El código Da Vinci', 'Suspenso', 4),
-('Breve historia del tiempo', 'Divulgación Científica', 2);
+-- Datos de ejemplo
+INSERT INTO socio (nombre, telefono, correo) VALUES
+('Juan Pérez', '123456789', 'juan@email.com'),
+('María García', '987654321', 'maria@email.com');
+
+INSERT INTO libro (nombre, genero, stock) VALUES
+('Cien años de soledad', 'Novela', 3),
+('El principito', 'Infantil', 2),
+('Don Quijote', 'Novela', 1),
+('Harry Potter', 'Fantasía', 4);
