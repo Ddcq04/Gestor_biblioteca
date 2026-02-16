@@ -186,6 +186,23 @@ document.addEventListener("DOMContentLoaded", (): void => {
     });
 
     // Botones de consulta de préstamos
+    document.getElementById("btnfiltrarPrestamos")?.addEventListener("click", async (): Promise<void> => {
+        const socioId: string = (document.getElementById("busqIdSocio") as HTMLInputElement).value;
+        
+        if (!socioId) {
+            alert("Por favor, ingrese un ID de socio");
+            return;
+        }
+        
+        try {
+            const prestamos = await api<Prestamo[]>(`prestamosSocio&id=${socioId}`);
+            mostrarPrestamos(prestamos, `Préstamos del socio ID: ${socioId}`);
+        } catch (error) {
+            alert("Error al cargar préstamos del socio");
+            console.error(error);
+        }
+    });
+
     document.getElementById("btnVencidos")?.addEventListener("click", async (): Promise<void> => {
         try {
             const prestamos = await api<Prestamo[]>("vencidos");

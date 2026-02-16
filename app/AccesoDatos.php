@@ -158,12 +158,13 @@ class AccesoDatos {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getPrestamosActivos(){
-        $stmt = $this->dbh->query("SELECT p.*, s.nombre as socio_nombre, l.nombre as libro_nombre 
+    public function getPrestamosSocio($socio_id){
+        $stmt = $this->dbh->prepare("SELECT p.*, s.nombre as socio_nombre, l.nombre as libro_nombre 
                                    FROM prestamo p 
                                    JOIN socio s ON p.socio_id = s.id 
                                    JOIN libro l ON p.libro_id = l.id 
-                                   WHERE p.fecha_devolucion IS NULL");
+                                   WHERE s.id = ?");
+        $stmt->execute([$socio_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -172,7 +173,6 @@ class AccesoDatos {
                                    FROM prestamo p 
                                    JOIN socio s ON p.socio_id = s.id 
                                    JOIN libro l ON p.libro_id = l.id 
-                                   WHERE p.fecha_devolucion IS NOT NULL 
                                    ORDER BY p.fecha_devolucion DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

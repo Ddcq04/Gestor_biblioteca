@@ -112,8 +112,13 @@ try {
             echo json_encode($modelo->getNoVencidos());
             break;
 
-        case 'prestamosActivos':
-            echo json_encode($modelo->getPrestamosActivos());
+        case 'prestamosSocio':
+            $id = $_GET['id'] ?? 0;
+            if (!$id) {
+                echo json_encode(['error' => 'ID de socio no especificado']);
+                break;
+            }
+            echo json_encode($modelo->getPrestamosSocio($id));
             break;
 
         case 'historial':
