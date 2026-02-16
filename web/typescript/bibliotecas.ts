@@ -53,9 +53,9 @@ document.addEventListener("DOMContentLoaded", (): void => {
     cargarGeneros();
     cargarTodosLosLibros();
     
-    // ==== EVENT LISTENERS ====
+
     
-    // Alta socio
+  
     document.getElementById("formNuevoSocio")?.addEventListener("submit", async (e: Event): Promise<void> => {
         e.preventDefault();
         const data = {
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", (): void => {
         }
     });
 
-    // Buscar socio y pintar tabla
+   
     document.getElementById("btnBuscarSocio")?.addEventListener("click", async (): Promise<void> => {
         const nombre: string = (document.getElementById("busqNombreSocio") as HTMLInputElement).value;
         
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", (): void => {
         }
     });
 
-    // Modificar socio
+ 
     document.getElementById("formModSocio")?.addEventListener("submit", async (e: Event): Promise<void> => {
         e.preventDefault();
         const id: string = (document.getElementById("modIdS") as HTMLInputElement).value;
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", (): void => {
         }
     });
 
-    // Alta libro
+  
     document.getElementById("formNuevoLibro")?.addEventListener("submit", async (e: Event): Promise<void> => {
         e.preventDefault();
         const data = {
@@ -137,13 +137,13 @@ document.addEventListener("DOMContentLoaded", (): void => {
         }
     });
 
-    // Filtrar libros por género
+   
     document.getElementById("btnFiltrarLibro")?.addEventListener("click", async (): Promise<void> => {
         const genero: string = (document.getElementById("busqLibroCatalogo") as HTMLSelectElement).value;
         await cargarLibrosPorGenero(genero);
     });
 
-    // Préstamo rápido
+ 
     document.getElementById("formPrestamoRapido")?.addEventListener("submit", async (e: Event): Promise<void> => {
         e.preventDefault();
         const libroId: string = (document.getElementById("pLibroId") as HTMLInputElement).value;
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", (): void => {
         }
     });
 
-    // Botones de consulta de préstamos
+   
     document.getElementById("btnfiltrarPrestamos")?.addEventListener("click", async (): Promise<void> => {
         const socioId: string = (document.getElementById("busqIdSocio") as HTMLInputElement).value;
         
@@ -218,8 +218,8 @@ document.addEventListener("DOMContentLoaded", (): void => {
     });
 });
 
-// ==== FUNCIONES AUXILIARES ====
-// Cargar todos los socios
+
+
 async function cargarTodosLosSocios(): Promise<void> {
     try {
         const socios = await api<Socio[]>("getSocios");
@@ -230,7 +230,6 @@ async function cargarTodosLosSocios(): Promise<void> {
     }
 }
 
-// Mostrar socios en tabla
 function mostrarSociosEnTabla(socios: Socio[]): void {
     const tbody = document.getElementById("infoSocioText");
     if (!tbody) return;
@@ -241,7 +240,7 @@ function mostrarSociosEnTabla(socios: Socio[]): void {
     }
     
     tbody.innerHTML = socios.map((socio: Socio): string => {
-        // Escapar comillas simples para el onclick
+     
         const nombreEscapado = socio.nombre.replace(/'/g, "\\'");
         const telefonoEscapado = socio.telefono.replace(/'/g, "\\'");
         const correoEscapado = socio.correo.replace(/'/g, "\\'");
@@ -262,7 +261,7 @@ function mostrarSociosEnTabla(socios: Socio[]): void {
     `}).join("");
 }
 
-// Función global para seleccionar socio
+
 declare global {
     interface Window {
         seleccionarLibro: (id: number, titulo: string) => void;
@@ -343,7 +342,6 @@ function mostrarLibros(libros: Libro[]): void {
     `}).join("");
 }
 
-// ✅ CORREGIDO: Declaración global como módulo
 export {};
 
 window.seleccionarLibro = function(id: number, titulo: string): void {

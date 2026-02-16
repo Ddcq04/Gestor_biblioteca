@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// web/typescript/bibliotecas.ts
+
 const API_URL = '../app/server.php';
 function api(action_1) {
     return __awaiter(this, arguments, void 0, function* (action, method = "GET", body = null) {
@@ -34,8 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     cargarGeneros();
     cargarTodosLosLibros();
-    // ==== EVENT LISTENERS ====
-    // Alta socio
+ 
     (_a = document.getElementById("formNuevoSocio")) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const data = {
@@ -54,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al registrar socio");
         }
     }));
-    // Buscar socio y pintar tabla
+
     (_b = document.getElementById("btnBuscarSocio")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const nombre = document.getElementById("busqNombreSocio").value;
         if (!nombre) {
@@ -73,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(error);
         }
     }));
-    // Modificar socio
+
     (_c = document.getElementById("formModSocio")) === null || _c === void 0 ? void 0 : _c.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const id = document.getElementById("modIdS").value;
@@ -93,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al modificar socio");
         }
     }));
-    // Alta libro
+
     (_d = document.getElementById("formNuevoLibro")) === null || _d === void 0 ? void 0 : _d.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const data = {
@@ -114,12 +113,12 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al agregar libro");
         }
     }));
-    // Filtrar libros por género
+  
     (_e = document.getElementById("btnFiltrarLibro")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const genero = document.getElementById("busqLibroCatalogo").value;
         yield cargarLibrosPorGenero(genero);
     }));
-    // Préstamo rápido
+
     (_f = document.getElementById("formPrestamoRapido")) === null || _f === void 0 ? void 0 : _f.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const libroId = document.getElementById("pLibroId").value;
@@ -145,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al registrar préstamo");
         }
     }));
-    // Botones de consulta de préstamos
+  
     (_g = document.getElementById("btnfiltrarPrestamos")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const socioId = document.getElementById("busqIdSocio").value;
         if (!socioId) {
@@ -189,8 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }));
 });
-// ==== FUNCIONES AUXILIARES ====
-// Cargar todos los socios
+
+
 function cargarTodosLosSocios() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -203,7 +202,7 @@ function cargarTodosLosSocios() {
         }
     });
 }
-// Mostrar socios en tabla
+
 function mostrarSociosEnTabla(socios) {
     const tbody = document.getElementById("infoSocioText");
     if (!tbody)
@@ -213,7 +212,7 @@ function mostrarSociosEnTabla(socios) {
         return;
     }
     tbody.innerHTML = socios.map((socio) => {
-        // Escapar comillas simples para el onclick
+       
         const nombreEscapado = socio.nombre.replace(/'/g, "\\'");
         const telefonoEscapado = socio.telefono.replace(/'/g, "\\'");
         const correoEscapado = socio.correo.replace(/'/g, "\\'");
