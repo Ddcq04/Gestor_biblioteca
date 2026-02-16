@@ -41,10 +41,10 @@ class AccesoDatos {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getSocioPorNombre($nombre){
-        $stmt = $this->dbh->prepare("SELECT * FROM socio WHERE nombre LIKE ? LIMIT 1");
+    public function getSociosPorNombre($nombre){
+        $stmt = $this->dbh->prepare("SELECT * FROM socio WHERE nombre LIKE ?");
         $stmt->execute(["%$nombre%"]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // ============= LIBROS =============

@@ -74,38 +74,26 @@ document.addEventListener("DOMContentLoaded", (): void => {
         }
     });
 
-    // Buscar socio
+    // Buscar socio y pintar tabla
     document.getElementById("btnBuscarSocio")?.addEventListener("click", async (): Promise<void> => {
         const nombre: string = (document.getElementById("busqNombreSocio") as HTMLInputElement).value;
+        
         if (!nombre) {
             alert("Ingrese un nombre para buscar");
             return;
         }
+        
         try {
-            const socio = await api<Socio | null>(`buscarSocioNombre&nombre=${encodeURIComponent(nombre)}`);
-            if (!socio) {
-                alert("Socio no encontrado");
-                return;
+            const socios = await api<Socio[]>(`buscarSocioNombre&nombre=${encodeURIComponent(nombre)}`);
+            mostrarSociosEnTabla(socios);
+            
+            if (socios.length === 0) {
+                alert("No se encontraron socios con ese nombre");
             }
-            document.getElementById("infoSocioText")!.innerHTML = `
-                <strong>ID:</strong> ${socio.id}<br>
-                <strong>Nombre:</strong> ${socio.nombre}<br>
-                <strong>Email:</strong> ${socio.correo}<br>
-                <strong>Teléfono:</strong> ${socio.telefono}
-            `;
-            (document.getElementById("resSocio") as HTMLElement).style.display = "block";
-            (document.getElementById("modIdS") as HTMLInputElement).value = socio.id.toString();
-            (document.getElementById("modSocio") as HTMLInputElement).value = socio.nombre;
-            (document.getElementById("modgmailSocio") as HTMLInputElement).value = socio.correo;
-            (document.getElementById("modtelfSocio") as HTMLInputElement).value = socio.telefono;
         } catch (error) {
-            alert("Error al buscar socio");
+            alert("Error al buscar socios");
+            console.error(error);
         }
-    });
-
-    // Activar formulario de modificación
-    document.getElementById("btnActivarMod")?.addEventListener("click", (): void => {
-        (document.getElementById("formModSocio") as HTMLElement).style.display = "block";
     });
 
     // Modificar socio
@@ -122,7 +110,6 @@ document.addEventListener("DOMContentLoaded", (): void => {
             alert(res.mensaje);
             if (res.status) {
                 (document.getElementById("formModSocio") as HTMLElement).style.display = "none";
-                (document.getElementById("resSocio") as HTMLElement).style.display = "none";
             }
         } catch (error) {
             alert("Error al modificar socio");
@@ -232,6 +219,64 @@ document.addEventListener("DOMContentLoaded", (): void => {
 });
 
 // ==== FUNCIONES AUXILIARES ====
+// Cargar todos los socios
+async function cargarTodosLosSocios(): Promise<void> {
+    try {
+        const socios = await api<Socio[]>("getSocios");
+        mostrarSociosEnTabla(socios);
+    } catch (error) {
+        console.error("Error al cargar socios:", error);
+        alert("Error al cargar la lista de socios");
+    }
+}
+
+// Mostrar socios en tabla
+function mostrarSociosEnTabla(socios: Socio[]): void {
+    const tbody = document.getElementById("infoSocioText");
+    if (!tbody) return;
+    
+    if (!socios || socios.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No hay socios para mostrar</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = socios.map((socio: Socio): string => {
+        // Escapar comillas simples para el onclick
+        const nombreEscapado = socio.nombre.replace(/'/g, "\\'");
+        const telefonoEscapado = socio.telefono.replace(/'/g, "\\'");
+        const correoEscapado = socio.correo.replace(/'/g, "\\'");
+        
+        return `
+        <tr>
+            <td>${socio.id}</td>
+            <td>${socio.nombre}</td>
+            <td>${socio.telefono}</td>
+            <td>${socio.correo}</td>
+            <td>
+                <button onclick="window.seleccionarSocio(${socio.id}, '${nombreEscapado}', '${telefonoEscapado}', '${correoEscapado}')" 
+                        class="btn" style="background:#e67e22; padding:5px 10px;">
+                    Modificar
+                </button>
+            </td>
+        </tr>
+    `}).join("");
+}
+
+// Función global para seleccionar socio
+declare global {
+    interface Window {
+        seleccionarLibro: (id: number, titulo: string) => void;
+        seleccionarSocio: (id: number, nombre: string, telefono: string, correo: string) => void;
+    }
+}
+
+window.seleccionarSocio = function(id: number, nombre: string, telefono: string, correo: string): void {
+    (document.getElementById("modIdS") as HTMLInputElement).value = id.toString();
+    (document.getElementById("modSocio") as HTMLInputElement).value = nombre;
+    (document.getElementById("modtelfSocio") as HTMLInputElement).value = telefono;
+    (document.getElementById("modgmailSocio") as HTMLInputElement).value = correo;
+    (document.getElementById("formModSocio") as HTMLElement).style.display = "block";
+};
 
 async function cargarGeneros(): Promise<void> {
     try {
@@ -300,12 +345,6 @@ function mostrarLibros(libros: Libro[]): void {
 
 // ✅ CORREGIDO: Declaración global como módulo
 export {};
-
-declare global {
-    interface Window {
-        seleccionarLibro: (id: number, titulo: string) => void;
-    }
-}
 
 window.seleccionarLibro = function(id: number, titulo: string): void {
     (document.getElementById("pLibroId") as HTMLInputElement).value = id.toString();

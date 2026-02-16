@@ -31,7 +31,7 @@ function api(action_1) {
     });
 }
 document.addEventListener("DOMContentLoaded", () => {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     cargarGeneros();
     cargarTodosLosLibros();
     // ==== EVENT LISTENERS ====
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al registrar socio");
         }
     }));
-    // Buscar socio
+    // Buscar socio y pintar tabla
     (_b = document.getElementById("btnBuscarSocio")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const nombre = document.getElementById("busqNombreSocio").value;
         if (!nombre) {
@@ -62,33 +62,19 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         try {
-            const socio = yield api(`buscarSocioNombre&nombre=${encodeURIComponent(nombre)}`);
-            if (!socio) {
-                alert("Socio no encontrado");
-                return;
+            const socios = yield api(`buscarSocioNombre&nombre=${encodeURIComponent(nombre)}`);
+            mostrarSociosEnTabla(socios);
+            if (socios.length === 0) {
+                alert("No se encontraron socios con ese nombre");
             }
-            document.getElementById("infoSocioText").innerHTML = `
-                <strong>ID:</strong> ${socio.id}<br>
-                <strong>Nombre:</strong> ${socio.nombre}<br>
-                <strong>Email:</strong> ${socio.correo}<br>
-                <strong>Teléfono:</strong> ${socio.telefono}
-            `;
-            document.getElementById("resSocio").style.display = "block";
-            document.getElementById("modIdS").value = socio.id.toString();
-            document.getElementById("modSocio").value = socio.nombre;
-            document.getElementById("modgmailSocio").value = socio.correo;
-            document.getElementById("modtelfSocio").value = socio.telefono;
         }
         catch (error) {
-            alert("Error al buscar socio");
+            alert("Error al buscar socios");
+            console.error(error);
         }
     }));
-    // Activar formulario de modificación
-    (_c = document.getElementById("btnActivarMod")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
-        document.getElementById("formModSocio").style.display = "block";
-    });
     // Modificar socio
-    (_d = document.getElementById("formModSocio")) === null || _d === void 0 ? void 0 : _d.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+    (_c = document.getElementById("formModSocio")) === null || _c === void 0 ? void 0 : _c.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const id = document.getElementById("modIdS").value;
         const data = {
@@ -101,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(res.mensaje);
             if (res.status) {
                 document.getElementById("formModSocio").style.display = "none";
-                document.getElementById("resSocio").style.display = "none";
             }
         }
         catch (error) {
@@ -109,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }));
     // Alta libro
-    (_e = document.getElementById("formNuevoLibro")) === null || _e === void 0 ? void 0 : _e.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+    (_d = document.getElementById("formNuevoLibro")) === null || _d === void 0 ? void 0 : _d.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const data = {
             nombre: document.getElementById("titulolibro").value,
@@ -130,12 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }));
     // Filtrar libros por género
-    (_f = document.getElementById("btnFiltrarLibro")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+    (_e = document.getElementById("btnFiltrarLibro")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const genero = document.getElementById("busqLibroCatalogo").value;
         yield cargarLibrosPorGenero(genero);
     }));
     // Préstamo rápido
-    (_g = document.getElementById("formPrestamoRapido")) === null || _g === void 0 ? void 0 : _g.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+    (_f = document.getElementById("formPrestamoRapido")) === null || _f === void 0 ? void 0 : _f.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
         e.preventDefault();
         const libroId = document.getElementById("pLibroId").value;
         const socioId = document.getElementById("pSocioId").value;
@@ -161,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }));
     // Botones de consulta de préstamos
-    (_h = document.getElementById("btnfiltrarPrestamos")) === null || _h === void 0 ? void 0 : _h.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+    (_g = document.getElementById("btnfiltrarPrestamos")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const socioId = document.getElementById("busqIdSocio").value;
         if (!socioId) {
             alert("Por favor, ingrese un ID de socio");
@@ -176,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(error);
         }
     }));
-    (_j = document.getElementById("btnVencidos")) === null || _j === void 0 ? void 0 : _j.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+    (_h = document.getElementById("btnVencidos")) === null || _h === void 0 ? void 0 : _h.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const prestamos = yield api("vencidos");
             mostrarPrestamos(prestamos, "Préstamos Vencidos");
@@ -185,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al cargar préstamos vencidos");
         }
     }));
-    (_k = document.getElementById("btnNoVencidos")) === null || _k === void 0 ? void 0 : _k.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+    (_j = document.getElementById("btnNoVencidos")) === null || _j === void 0 ? void 0 : _j.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const prestamos = yield api("noVencidos");
             mostrarPrestamos(prestamos, "Préstamos No Vencidos");
@@ -194,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al cargar préstamos no vencidos");
         }
     }));
-    (_l = document.getElementById("btnHistorial")) === null || _l === void 0 ? void 0 : _l.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+    (_k = document.getElementById("btnHistorial")) === null || _k === void 0 ? void 0 : _k.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const prestamos = yield api("historial");
             mostrarPrestamos(prestamos, "Historial de Devoluciones");
@@ -205,6 +190,56 @@ document.addEventListener("DOMContentLoaded", () => {
     }));
 });
 // ==== FUNCIONES AUXILIARES ====
+// Cargar todos los socios
+function cargarTodosLosSocios() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const socios = yield api("getSocios");
+            mostrarSociosEnTabla(socios);
+        }
+        catch (error) {
+            console.error("Error al cargar socios:", error);
+            alert("Error al cargar la lista de socios");
+        }
+    });
+}
+// Mostrar socios en tabla
+function mostrarSociosEnTabla(socios) {
+    const tbody = document.getElementById("infoSocioText");
+    if (!tbody)
+        return;
+    if (!socios || socios.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No hay socios para mostrar</td></tr>';
+        return;
+    }
+    tbody.innerHTML = socios.map((socio) => {
+        // Escapar comillas simples para el onclick
+        const nombreEscapado = socio.nombre.replace(/'/g, "\\'");
+        const telefonoEscapado = socio.telefono.replace(/'/g, "\\'");
+        const correoEscapado = socio.correo.replace(/'/g, "\\'");
+        return `
+        <tr>
+            <td>${socio.id}</td>
+            <td>${socio.nombre}</td>
+            <td>${socio.telefono}</td>
+            <td>${socio.correo}</td>
+            <td>
+                <button onclick="window.seleccionarSocio(${socio.id}, '${nombreEscapado}', '${telefonoEscapado}', '${correoEscapado}')" 
+                        class="btn" style="background:#e67e22; padding:5px 10px;">
+                    Modificar
+                </button>
+            </td>
+        </tr>
+    `;
+    }).join("");
+}
+window.seleccionarSocio = function (id, nombre, telefono, correo) {
+    document.getElementById("modIdS").value = id.toString();
+    document.getElementById("modSocio").value = nombre;
+    document.getElementById("modtelfSocio").value = telefono;
+    document.getElementById("modgmailSocio").value = correo;
+    document.getElementById("formModSocio").style.display = "block";
+};
 function cargarGeneros() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

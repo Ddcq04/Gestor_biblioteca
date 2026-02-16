@@ -45,7 +45,7 @@ try {
 
         case 'buscarSocioNombre':
             $nombre = $_GET['nombre'] ?? '';
-            $socio = $modelo->getSocioPorNombre($nombre);
+            $socio = $modelo->getSociosPorNombre($nombre);
             echo json_encode($socio);
             break;
 

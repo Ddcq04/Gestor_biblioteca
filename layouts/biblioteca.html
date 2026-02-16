@@ -33,10 +33,25 @@
                     <input type="text" id="busqNombreSocio" placeholder="Nombre del socio...">
                     <button id="btnBuscarSocio" class="btn">Buscar</button>
                 </div>
+                
+                <table id="tablaSocios" style="width:100%; margin-top:15px;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="infoSocioText"></tbody>
+                </table>
+                <!--
                 <div id="resSocio" style="display:none; margin-top:10px; padding:10px; background:#f2f2f2; border-radius:8px;">
                     <p id="infoSocioText"></p>
                     <button id="btnActivarMod" class="btn" style="background:#e67e22">Modificar Datos</button>
                 </div>
+                -->
                 <form id="formModSocio" class="form" style="display:none; margin-top:10px;">
                     <input type="hidden" id="modIdS">
                     <input type="text" id="modSocio" placeholder="Nombre">
