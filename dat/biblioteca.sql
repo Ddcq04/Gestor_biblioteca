@@ -40,3 +40,9 @@ INSERT INTO libro (nombre, genero, stock) VALUES
 ('El principito', 'Infantil', 2),
 ('Don Quijote', 'Novela', 1),
 ('Harry Potter', 'Fantasía', 4);
+('Cien años de soledad', 'Realismo mágico', 5);
+('Fundación', 'Ciencia ficción', 3);
+('El nombre de la rosa', 'Novela histórica', 4);
+('It', 'Terror', 2);
+('Sherlock Holmes', 'Misterio', 6);
+('Orgullo y prejuicio', 'Romance', 3);
